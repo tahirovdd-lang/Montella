@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>MONTELLA — Компания</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <base href="https://tahirovdd-lang.github.io/Montella/">
 
@@ -41,25 +41,18 @@
   --panel:#111827;
   --panel2:#0F172A;
   --white:#ffffff;
-
   --text:#ffffff;
   --muted: rgba(229,231,235,.72);
-
   --stroke: rgba(255,255,255,.10);
   --stroke2: rgba(255,255,255,.08);
   --shadow: rgba(0,0,0,.60);
-
   --r-lg:24px;
   --r-md:22px;
-
   --vh: 1vh;
-
   --accent:#1E3A8A;
   --accent2:#1D4ED8;
-
   --header-bg:#0B0B0C;
   --header-text:#ffffff;
-
   --safeB: env(safe-area-inset-bottom, 0px);
   --safeT: env(safe-area-inset-top, 0px);
   --safeL: env(safe-area-inset-left, 0px);
@@ -85,7 +78,11 @@ body{
   padding-top: var(--safeT);
   -webkit-text-size-adjust:100%;
 }
-.page{max-width:560px;margin:0 auto;}
+.page{
+  width:min(100%, 1200px);
+  margin:0 auto;
+  padding:0 max(8px, env(safe-area-inset-left)) 0 max(8px, env(safe-area-inset-right));
+}
 
 /* splash */
 .splash-screen{
@@ -117,7 +114,7 @@ body{
 
 /* header */
 .header{
-  padding:12px 12px 14px;
+  padding:12px 14px 14px;
   background:linear-gradient(180deg, rgba(11,11,12,.98), rgba(11,11,12,.92));
   border-bottom:1px solid rgba(255,255,255,.12);
   box-shadow:0 12px 26px rgba(0,0,0,.55);
@@ -127,52 +124,17 @@ body{
   position:relative;
   color:var(--header-text);
   gap:12px;
-  min-height:110px;
+  min-height:112px;
 }
 .header-left{
   display:flex;
   flex-direction:column;
   align-items:flex-start;
   justify-content:center;
-  padding-left:2px;
-  padding-right:170px;
   flex:1 1 auto;
   min-width:0;
+  padding-right:185px;
 }
-.header img{
-  position:absolute;
-  right:92px;
-  top:50%;
-  transform:translateY(-50%);
-  width:74px;
-  height:74px;
-  object-fit:cover;
-  border-radius:50%;
-  background:rgba(255,255,255,.08);
-  padding:4px;
-  border:2px solid rgba(255,255,255,.18);
-  box-shadow:0 14px 30px rgba(0,0,0,.55);
-}
-.header-manager-btn{
-  position:absolute;
-  right:136px;
-  top:50%;
-  transform:translateY(-50%);
-  border:none;
-  border-radius:16px;
-  padding:10px 12px;
-  background:linear-gradient(180deg, var(--accent), var(--accent2));
-  color:#fff;
-  font-size:12px;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 10px 24px rgba(0,0,0,.40);
-  white-space:nowrap;
-  max-width:126px;
-  line-height:1.15;
-}
-.header-manager-btn:active{transform:translateY(-50%) scale(.98);}
-
 .brand-title{
   font-size:27px;
   line-height:1;
@@ -212,6 +174,41 @@ body{
   color:var(--header-text);
 }
 
+.header-logo{
+  position:absolute;
+  right:92px;
+  top:50%;
+  transform:translateY(-50%);
+  width:74px;
+  height:74px;
+  object-fit:cover;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  padding:4px;
+  border:2px solid rgba(255,255,255,.18);
+  box-shadow:0 14px 30px rgba(0,0,0,.55);
+}
+
+.header-manager-btn{
+  position:absolute;
+  right:176px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  border-radius:16px;
+  padding:10px 12px;
+  background:linear-gradient(180deg, var(--accent), var(--accent2));
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.40);
+  white-space:nowrap;
+  max-width:126px;
+  line-height:1.15;
+}
+.header-manager-btn:active{transform:translateY(-50%) scale(.98);}
+
 /* header actions */
 .header-actions{
   position:absolute;
@@ -242,6 +239,7 @@ body{
 .burger span:nth-child(3){bottom:0;}
 .act-ico{font-size:14px;line-height:1;color:#fff;}
 
+/* rows */
 .langs{
   display:flex;
   gap:10px;
@@ -251,7 +249,6 @@ body{
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
 }
-
 .btn{
   padding:12px 18px;
   border-radius:28px;
@@ -282,7 +279,7 @@ body{
 .lang-flag{margin-right:8px; font-size:16px; line-height:1;}
 
 .input{
-  margin:8px auto;display:block;padding:14px;width:85%;
+  margin:8px auto;display:block;padding:14px;width:100%;
   border-radius:22px;font-size:15px;border:1px solid var(--stroke2);
   background: rgba(17,24,39,.55);
   box-shadow: 0 10px 22px rgba(0,0,0,.55);
@@ -290,7 +287,6 @@ body{
   color:#fff;
 }
 
-/* products */
 .products{display:grid;grid-template-columns:1fr;gap:16px;padding:12px;}
 
 /* category cards */
@@ -365,12 +361,12 @@ body{
   opacity:.75;
 }
 
-/* cart summary */
+/* cart */
 .cart-wrap{
   padding:10px 12px 0;
 }
 .cart-card{
-  width:94%;
+  width:100%;
   margin:0 auto;
   border:1px solid rgba(255,255,255,.10);
   border-radius:22px;
@@ -465,7 +461,7 @@ body{
 }
 .sheet-grid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(2, minmax(0,1fr));
   gap:12px;
 }
 .sheet-item{
@@ -557,6 +553,64 @@ body{
 .menu-sub{font-size:12px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;color:rgba(229,231,235,.75);}
 .menu-right{opacity:.65;font-weight:900;color:rgba(229,231,235,.75);}
 
+/* quality certificates modal */
+.cert-modal{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.72);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:.18s;
+  z-index:2600;
+  padding:18px;
+}
+.cert-modal.show{opacity:1;pointer-events:auto;}
+.cert-box{
+  width:min(920px, 100%);
+  max-height:88vh;
+  overflow:auto;
+  border-radius:22px;
+  background: rgba(15,23,42,.98);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 18px 44px rgba(0,0,0,.60);
+}
+.cert-top{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px;
+  padding:12px 12px;
+  background:rgba(255,255,255,.06);
+  position:sticky;
+  top:0;
+}
+.cert-title{font-weight:900;color:#fff;}
+.cert-close{
+  width:38px;height:38px;border:none;border-radius:14px;background:transparent;cursor:pointer;
+  font-size:22px;line-height:1;color:rgba(229,231,235,.72);
+}
+.cert-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:12px;
+  padding:12px;
+}
+.cert-card{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(255,255,255,.05);
+}
+.cert-card img{
+  display:block;
+  width:100%;
+  height:320px;
+  object-fit:contain;
+  background:#fff;
+}
+.cert-name{
+  padding:10px 12px;
+  font-weight:900;
+  color:#fff;
+}
+
 /* consult */
 .consult-wrap{
   padding:10px 12px 4px;
@@ -564,7 +618,7 @@ body{
   margin-bottom:8px;
 }
 .consult-card{
-  width:94%;
+  width:100%;
   margin:8px auto 0;
   border:1px solid rgba(255,255,255,.10);
   border-radius:22px;
@@ -591,44 +645,71 @@ body{
 }
 .consult-send:active{transform:scale(.98);}
 
-@media (max-width:520px){
-  .sheet-grid{grid-template-columns:1fr;}
-  .consult-card{width:94%;}
+/* responsive */
+@media (min-width:768px){
+  .products{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
+  .cart-wrap,
+  .consult-wrap,
+  .popular-wrap,
+  .langs{
+    max-width:1200px;
+    margin:0 auto;
+  }
 }
-@media (max-width:420px){
+@media (min-width:1024px){
+  .products{
+    grid-template-columns:repeat(3, minmax(0,1fr));
+  }
+  .sheet-grid{
+    grid-template-columns:repeat(3, minmax(0,1fr));
+  }
+}
+@media (max-width:767px){
+  .sheet-grid{grid-template-columns:1fr;}
+  .cert-grid{grid-template-columns:1fr;}
+  .cert-card img{height:260px;}
+}
+@media (max-width:520px){
   .header{
     padding:10px 10px 12px;
     min-height:112px;
   }
-  .header img{
+  .header-logo{
     width:60px;
     height:60px;
     right:46px;
   }
   .header-manager-btn{
-    right:114px;
-    max-width:104px;
-    font-size:11px;
+    right:116px;
+    max-width:100px;
+    font-size:10.5px;
     padding:8px 10px;
   }
   .brand-title{font-size:24px;}
   .brand-slogan{font-size:12.5px;}
-  .header-left{padding-right:160px;}
-  .input{width:92%;}
+  .header-left{padding-right:158px;}
 }
-@media (max-width:360px){
-  .header img{width:54px;height:54px;right:44px;}
+@media (max-width:390px){
+  .header{
+    min-height:120px;
+  }
+  .header-logo{
+    width:54px;
+    height:54px;
+    right:44px;
+  }
+  .header-manager-btn{
+    right:106px;
+    max-width:90px;
+    font-size:10px;
+    padding:7px 8px;
+  }
   .brand-title{font-size:22px;}
   .brand-slogan{font-size:11.5px;}
   .brand-phone a{font-size:13px;}
-  .btn{min-width:108px;padding:12px 16px;}
-  .langs .btn{min-width:86px;padding:10px 10px;font-size:13px;}
-  .header-left{padding-right:152px;}
-  .header-manager-btn{
-    right:106px;
-    max-width:96px;
-    font-size:10.5px;
-  }
+  .header-left{padding-right:146px;}
 }
 </style>
 </head>
@@ -655,7 +736,7 @@ body{
     <span id="headerManagerText">Связаться с менеджером</span>
   </button>
 
-  <img src="images/logo.png" onerror="this.src='logo.png'" alt="Montella logo">
+  <img class="header-logo" src="images/logo.jpg" onerror="this.src='images/logo.png'" alt="Montella logo">
 
   <div class="header-actions">
     <div class="act-btn" onclick="openTopMenu()" title="Меню">
@@ -717,6 +798,17 @@ body{
         <div class="menu-txt">
           <div class="menu-name">Facebook</div>
           <div class="menu-sub" id="mFacebookSub">Открыть Facebook</div>
+        </div>
+      </div>
+      <div class="menu-right">›</div>
+    </a>
+
+    <a class="menu-item" href="#" onclick="openCertificates(event)">
+      <div class="menu-left">
+        <div class="menu-ic">📄</div>
+        <div class="menu-txt">
+          <div class="menu-name" id="mCertTitle">Сертификаты качества</div>
+          <div class="menu-sub" id="mCertSub">2 фотографии сертификатов</div>
         </div>
       </div>
       <div class="menu-right">›</div>
@@ -842,6 +934,25 @@ body{
   <div class="sheet-grid" id="sheetGrid"></div>
 </div>
 
+<div class="cert-modal" id="certModal" onclick="closeCertificates(event)">
+  <div class="cert-box" onclick="event.stopPropagation()">
+    <div class="cert-top">
+      <div class="cert-title" id="certModalTitle">Сертификаты качества</div>
+      <button class="cert-close" onclick="closeCertificates(event)">×</button>
+    </div>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <img src="images/certificate_1.jpg" onerror="this.onerror=null;this.src='images/logo.jpg'" alt="certificate 1">
+        <div class="cert-name" id="certName1">Сертификат качества 1</div>
+      </div>
+      <div class="cert-card">
+        <img src="images/certificate_2.jpg" onerror="this.onerror=null;this.src='images/logo.jpg'" alt="certificate 2">
+        <div class="cert-name" id="certName2">Сертификат качества 2</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="popup" id="popup"><div class="popup-box" id="popupText">✅</div></div>
 
 </div>
@@ -863,14 +974,11 @@ window.addEventListener('load', function(){
 
 const REVIEW_URL = "https://yandex.uz/maps/org/6496150310/?ll=69.375703%2C41.378435&z=15";
 const ADMIN_ID = 6013591658;
-
 const PHONE1_DISPLAY = "+998 (78) 777-17-71";
 const PHONE1_TEL = "tel:+998787771771";
-
 const INSTAGRAM_URL = "https://www.instagram.com/montella.official/";
 const YOUTUBE_URL  = "https://www.youtube.com/@navruzinternationalcorp.4956/shorts";
 const FACEBOOK_URL = "https://www.facebook.com/Montellauz";
-
 const ABOUT_ADDR = "г. Самарканд, ваш адрес";
 const ABOUT_HOURS = "ПН-ПТ с 09:00-18:00\nСуббота — Выходной\nВоскресенье — Выходной";
 
@@ -905,6 +1013,15 @@ function scrollToConsult(){
   const el = document.getElementById('consultWrap');
   if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
+function openCertificates(e){
+  try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
+  closeTopMenu();
+  document.getElementById('certModal').classList.add('show');
+}
+function closeCertificates(e){
+  try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
+  document.getElementById('certModal').classList.remove('show');
+}
 
 const tgUser = Telegram.WebApp.initDataUnsafe?.user || {};
 const tg_username = tgUser.username || "";
@@ -918,6 +1035,11 @@ const UI = {
     instaSub:'Открыть Instagram',
     youtubeSub:'Открыть YouTube',
     facebookSub:'Открыть Facebook',
+    certTitle:'Сертификаты качества',
+    certSub:'2 фотографии сертификатов',
+    certName1:'Сертификат качества 1',
+    certName2:'Сертификат качества 2',
+    certModalTitle:'Сертификаты качества',
     reviewTitle:'Оставить отзыв', reviewSub:'Отзывы',
     aboutTitle:'О нас', aboutSub:'Адрес, телефон, график',
     aboutAddr:'📍 Адрес',
@@ -951,6 +1073,11 @@ const UI = {
     instaSub:"Instagramni ochish",
     youtubeSub:"YouTubeni ochish",
     facebookSub:"Facebookni ochish",
+    certTitle:'Sifat sertifikatlari',
+    certSub:'2 ta sertifikat rasmi',
+    certName1:'Sifat sertifikati 1',
+    certName2:'Sifat sertifikati 2',
+    certModalTitle:'Sifat sertifikatlari',
     reviewTitle:'Fikr qoldirish', reviewSub:'Sharhlar',
     aboutTitle:'Biz haqimizda', aboutSub:'Manzil, telefon, ish vaqti',
     aboutAddr:'📍 Manzil',
@@ -984,6 +1111,11 @@ const UI = {
     instaSub:'Open Instagram',
     youtubeSub:'Open YouTube',
     facebookSub:'Open Facebook',
+    certTitle:'Quality certificates',
+    certSub:'2 certificate photos',
+    certName1:'Quality certificate 1',
+    certName2:'Quality certificate 2',
+    certModalTitle:'Quality certificates',
     reviewTitle:'Leave a review', reviewSub:'Reviews',
     aboutTitle:'About us', aboutSub:'Address, phone, hours',
     aboutAddr:'📍 Address',
@@ -1017,6 +1149,11 @@ const UI = {
     instaSub:'Instagram-ро кушоед',
     youtubeSub:'YouTube-ро кушоед',
     facebookSub:'Facebook-ро кушоед',
+    certTitle:'Сертификатҳои сифат',
+    certSub:'2 сурати сертификат',
+    certName1:'Сертификати сифат 1',
+    certName2:'Сертификати сифат 2',
+    certModalTitle:'Сертификатҳои сифат',
     reviewTitle:'Шарҳ гузоред', reviewSub:'Шарҳҳо',
     aboutTitle:'Дар бораи мо', aboutSub:'Суроға, телефон, соатҳо',
     aboutAddr:'📍 Суроға',
@@ -1051,58 +1188,58 @@ function mkName(ru, uz, en, tj){ return {ru, uz, en, tj}; }
 const SERVICES = [
   {
     id:'water',
-    img:'images/services_water.jpg',
+    img:'images/category_water.jpg',
     n: mkName('Минеральная вода','Mineral suv','Mineral water','Оби минералӣ'),
     desc: mkName('Освежающая минеральная вода на каждый день','Har kun uchun tetiklashtiruvchi mineral suv','Refreshing mineral water for every day','Оби минералии тароватбахш барои ҳар рӯз'),
     items:[
-      {id:'water1', img:'images/services_water.jpg', n:mkName('Montella 0.5L','Montella 0.5L','Montella 0.5L','Montella 0.5L'), price:3000},
-      {id:'water2', img:'images/services_water.jpg', n:mkName('Montella 0.7L','Montella 0.7L','Montella 0.7L','Montella 0.7L'), price:5000},
-      {id:'water3', img:'images/services_water.jpg', n:mkName('Montella 1L','Montella 1L','Montella 1L','Montella 1L'), price:7000},
-      {id:'water4', img:'images/services_water.jpg', n:mkName('Montella Sweet — лимон и мята 0.5L','Montella Sweet — limon va yalpiz 0.5L','Montella Sweet — lemon and mint 0.5L','Montella Sweet — лимӯ ва наъно 0.5L'), price:3000},
-      {id:'water5', img:'images/services_water.jpg', n:mkName('Montella Sweet — лимон и мята 0.7L','Montella Sweet — limon va yalpiz 0.7L','Montella Sweet — lemon and mint 0.7L','Montella Sweet — лимӯ ва наъно 0.7L'), price:5000},
-      {id:'water6', img:'images/services_water.jpg', n:mkName('Montella Sweet — лимон и мята 1L','Montella Sweet — limon va yalpiz 1L','Montella Sweet — lemon and mint 1L','Montella Sweet — лимӯ ва наъно 1L'), price:7000}
+      {id:'water1', img:'images/montella_05.jpg', n:mkName('Montella 0.5L','Montella 0.5L','Montella 0.5L','Montella 0.5L'), price:3000},
+      {id:'water2', img:'images/montella_07.jpg', n:mkName('Montella 0.7L','Montella 0.7L','Montella 0.7L','Montella 0.7L'), price:5000},
+      {id:'water3', img:'images/montella_1l.jpg', n:mkName('Montella 1L','Montella 1L','Montella 1L','Montella 1L'), price:7000},
+      {id:'water4', img:'images/montella_sweet_lemon_mint_05.jpg', n:mkName('Montella Sweet — лимон и мята 0.5L','Montella Sweet — limon va yalpiz 0.5L','Montella Sweet — lemon and mint 0.5L','Montella Sweet — лимӯ ва наъно 0.5L'), price:3000},
+      {id:'water5', img:'images/montella_sweet_lemon_mint_07.jpg', n:mkName('Montella Sweet — лимон и мята 0.7L','Montella Sweet — limon va yalpiz 0.7L','Montella Sweet — lemon and mint 0.7L','Montella Sweet — лимӯ ва наъно 0.7L'), price:5000},
+      {id:'water6', img:'images/montella_sweet_lemon_mint_1l.jpg', n:mkName('Montella Sweet — лимон и мята 1L','Montella Sweet — limon va yalpiz 1L','Montella Sweet — lemon and mint 1L','Montella Sweet — лимӯ ва наъно 1L'), price:7000}
     ]
   },
   {
     id:'energy',
-    img:'images/services_energy.jpg',
+    img:'images/category_energy.jpg',
     n: mkName('Энергетические напитки','Energetik ichimliklar','Energy drinks','Нӯшокиҳои энергетикӣ'),
     desc: mkName('Энергетические напитки для бодрости и активности','Tetiklik va faollik uchun energetik ichimliklar','Energy drinks for power and activity','Нӯшокиҳои энергетикӣ барои нерӯ ва фаъолият'),
     items:[
-      {id:'energy1', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.25L','Energetik ichimlik 18+ 0.25L','Energy drink 18+ 0.25L','Нӯшокии энергетикӣ 18+ 0.25L'), price:7500},
-      {id:'energy2', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.33L','Energetik ichimlik 18+ 0.33L','Energy drink 18+ 0.33L','Нӯшокии энергетикӣ 18+ 0.33L'), price:8330},
-      {id:'energy3', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.45L','Energetik ichimlik 18+ 0.45L','Energy drink 18+ 0.45L','Нӯшокии энергетикӣ 18+ 0.45L'), price:10000},
-      {id:'energy4', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.45L Карамель','Energetik ichimlik 18+ 0.45L Karamel','Energy drink 18+ 0.45L Caramel','Нӯшокии энергетикӣ 18+ 0.45L Карамел'), price:10000},
-      {id:'energy5', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.45L Кактус','Energetik ichimlik 18+ 0.45L Kaktus','Energy drink 18+ 0.45L Cactus','Нӯшокии энергетикӣ 18+ 0.45L Кактус'), price:10000}
+      {id:'energy1', img:'images/energy_18plus_025.jpg', n:mkName('Энергетический напиток 18+ 0.25L','Energetik ichimlik 18+ 0.25L','Energy drink 18+ 0.25L','Нӯшокии энергетикӣ 18+ 0.25L'), price:7500},
+      {id:'energy2', img:'images/energy_18plus_033.jpg', n:mkName('Энергетический напиток 18+ 0.33L','Energetik ichimlik 18+ 0.33L','Energy drink 18+ 0.33L','Нӯшокии энергетикӣ 18+ 0.33L'), price:8330},
+      {id:'energy3', img:'images/energy_18plus_045.jpg', n:mkName('Энергетический напиток 18+ 0.45L','Energetik ichimlik 18+ 0.45L','Energy drink 18+ 0.45L','Нӯшокии энергетикӣ 18+ 0.45L'), price:10000},
+      {id:'energy4', img:'images/energy_18plus_caramel_045.jpg', n:mkName('Энергетический напиток 18+ 0.45L Карамель','Energetik ichimlik 18+ 0.45L Karamel','Energy drink 18+ 0.45L Caramel','Нӯшокии энергетикӣ 18+ 0.45L Карамел'), price:10000},
+      {id:'energy5', img:'images/energy_18plus_cactus_045.jpg', n:mkName('Энергетический напиток 18+ 0.45L Кактус','Energetik ichimlik 18+ 0.45L Kaktus','Energy drink 18+ 0.45L Cactus','Нӯшокии энергетикӣ 18+ 0.45L Кактус'), price:10000}
     ]
   },
   {
     id:'tea',
-    img:'images/services_tea.jpg',
+    img:'images/category_tea.jpg',
     n: mkName('Чай','Choy','Tea','Чой'),
     desc: mkName('Классический и ароматный чай','An’anaviy va xushbo‘y choy','Classic and aromatic tea','Чои классикӣ ва хушбӯй'),
     items:[
-      {id:'tea1', img:'images/services_tea.jpg', n:mkName('Чай Айс — лесные ягоды 0.5L','Ays choy — o‘rmon mevalari 0.5L','Ice tea — forest berries 0.5L','Чой Айс — буттамеваи ҷангал 0.5L'), price:4170},
-      {id:'tea2', img:'images/services_tea.jpg', n:mkName('Чай Айс — лесные ягоды 1L','Ays choy — o‘rmon mevalari 1L','Ice tea — forest berries 1L','Чой Айс — буттамеваи ҷангал 1L'), price:10000},
-      {id:'tea3', img:'images/services_tea.jpg', n:mkName('Чай Айс — персик (зеленый) 0.5L','Ays choy — shaftoli (yashil) 0.5L','Ice tea — peach (green) 0.5L','Чой Айс — шафтолу (сабз) 0.5L'), price:4170},
-      {id:'tea4', img:'images/services_tea.jpg', n:mkName('Чай Айс — персик (зеленый) 1L','Ays choy — shaftoli (yashil) 1L','Ice tea — peach (green) 1L','Чой Айс — шафтолу (сабз) 1L'), price:10000},
-      {id:'tea5', img:'images/services_tea.jpg', n:mkName('Чай Айс — персик (черный) 0.5L','Ays choy — shaftoli (qora) 0.5L','Ice tea — peach (black) 0.5L','Чой Айс — шафтолу (сиёҳ) 0.5L'), price:4170},
-      {id:'tea6', img:'images/services_tea.jpg', n:mkName('Чай Айс — персик (черный) 1L','Ays choy — shaftoli (qora) 1L','Ice tea — peach (black) 1L','Чой Айс — шафтолу (сиёҳ) 1L'), price:10000},
-      {id:'tea7', img:'images/services_tea.jpg', n:mkName('Чай Айс — манго и ромашка 0.5L','Ays choy — mango va romashka 0.5L','Ice tea — mango and chamomile 0.5L','Чой Айс — манго ва бобуна 0.5L'), price:4170},
-      {id:'tea8', img:'images/services_tea.jpg', n:mkName('Чай Айс — манго и ромашка 1L','Ays choy — mango va romashka 1L','Ice tea — mango and chamomile 1L','Чой Айс — манго ва бобуна 1L'), price:10000}
+      {id:'tea1', img:'images/ice_tea_forest_berries_05.jpg', n:mkName('Чай Айс — лесные ягоды 0.5L','Ays choy — o‘rmon mevalari 0.5L','Ice tea — forest berries 0.5L','Чой Айс — буттамеваи ҷангал 0.5L'), price:4170},
+      {id:'tea2', img:'images/ice_tea_forest_berries_1l.jpg', n:mkName('Чай Айс — лесные ягоды 1L','Ays choy — o‘rmon mevalari 1L','Ice tea — forest berries 1L','Чой Айс — буттамеваи ҷангал 1L'), price:10000},
+      {id:'tea3', img:'images/ice_tea_peach_green_05.jpg', n:mkName('Чай Айс — персик (зеленый) 0.5L','Ays choy — shaftoli (yashil) 0.5L','Ice tea — peach (green) 0.5L','Чой Айс — шафтолу (сабз) 0.5L'), price:4170},
+      {id:'tea4', img:'images/ice_tea_peach_green_1l.jpg', n:mkName('Чай Айс — персик (зеленый) 1L','Ays choy — shaftoli (yashil) 1L','Ice tea — peach (green) 1L','Чой Айс — шафтолу (сабз) 1L'), price:10000},
+      {id:'tea5', img:'images/ice_tea_peach_black_05.jpg', n:mkName('Чай Айс — персик (черный) 0.5L','Ays choy — shaftoli (qora) 0.5L','Ice tea — peach (black) 0.5L','Чой Айс — шафтолу (сиёҳ) 0.5L'), price:4170},
+      {id:'tea6', img:'images/ice_tea_peach_black_1l.jpg', n:mkName('Чай Айс — персик (черный) 1L','Ays choy — shaftoli (qora) 1L','Ice tea — peach (black) 1L','Чой Айс — шафтолу (сиёҳ) 1L'), price:10000},
+      {id:'tea7', img:'images/ice_tea_mango_chamomile_05.jpg', n:mkName('Чай Айс — манго и ромашка 0.5L','Ays choy — mango va romashka 0.5L','Ice tea — mango and chamomile 0.5L','Чой Айс — манго ва бобуна 0.5L'), price:4170},
+      {id:'tea8', img:'images/ice_tea_mango_chamomile_1l.jpg', n:mkName('Чай Айс — манго и ромашка 1L','Ays choy — mango va romashka 1L','Ice tea — mango and chamomile 1L','Чой Айс — манго ва бобуна 1L'), price:10000}
     ]
   },
   {
     id:'juice',
-    img:'images/services_juice.jpg',
+    img:'images/category_juice.jpg',
     n: mkName('Сок','Sharbat','Juice','Шарбат'),
     desc: mkName('Натуральные соки с ярким вкусом','Yorqin ta’mli tabiiy sharbatlar','Natural juices with rich taste','Шарбатҳои табиӣ бо таъми бой'),
     items:[
-      {id:'juice1', img:'images/services_juice.jpg', n:mkName('Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L'), price:5833},
-      {id:'juice2', img:'images/services_juice.jpg', n:mkName('Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L'), price:5833},
-      {id:'juice3', img:'images/services_juice.jpg', n:mkName('Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L'), price:5833},
-      {id:'juice4', img:'images/services_juice.jpg', n:mkName('Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L'), price:5833},
-      {id:'juice5', img:'images/services_juice.jpg', n:mkName('Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L'), price:5833}
+      {id:'juice1', img:'images/tropic_multi_05.jpg', n:mkName('Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L'), price:5833},
+      {id:'juice2', img:'images/tropic_bs_mix_05.jpg', n:mkName('Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L'), price:5833},
+      {id:'juice3', img:'images/tropic_banan_05.jpg', n:mkName('Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L'), price:5833},
+      {id:'juice4', img:'images/tropic_kiwi_05.jpg', n:mkName('Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L'), price:5833},
+      {id:'juice5', img:'images/tropic_mango_05.jpg', n:mkName('Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L'), price:5833}
     ]
   }
 ];
@@ -1197,7 +1334,7 @@ function categoryHTML(cat, hasMatch){
   return `
     <div class="category-card">
       <div class="category-head" onclick="openCategorySheet('${cat.id}')">
-        <img src="${cat.img}" onerror="this.onerror=null;this.src='images/logo.png'">
+        <img src="${cat.img}" onerror="this.onerror=null;this.src='images/logo.jpg'">
         <div>
           <div class="category-title">${escapeHtml(nameOfCategory(cat.id))}</div>
           <div class="category-desc">${escapeHtml(descOfCategory(cat.id))}</div>
@@ -1247,7 +1384,7 @@ function popCardHTML(it){
   const minPrice = Math.min(...it.items.map(x => x.price));
   return `
   <div class="pop-card" onclick="openCategorySheet('${it.id}')">
-    <div class="pop-img"><img src="${it.img}" onerror="this.onerror=null;this.src='images/logo.png'"></div>
+    <div class="pop-img"><img src="${it.img}" onerror="this.onerror=null;this.src='images/logo.jpg'"></div>
     <div class="pop-name">${escapeHtml(nameOfCategory(it.id))}</div>
     <div class="pop-sub">${UI[lang].fromPrice} ${formatPrice(minPrice)}</div>
   </div>`;
@@ -1272,7 +1409,7 @@ function openCategorySheet(catId){
   const grid = document.getElementById('sheetGrid');
   grid.innerHTML = cat.items.map(item => `
     <div class="sheet-item">
-      <img class="sheet-item-img" src="${item.img || cat.img}" onerror="this.onerror=null;this.src='images/logo.png'" alt="">
+      <img class="sheet-item-img" src="${item.img || cat.img}" onerror="this.onerror=null;this.src='images/logo.jpg'" alt="">
       <div class="sheet-item-body">
         <div class="sheet-item-name">${escapeHtml(itemName(item))}</div>
         <div class="sheet-item-price">${formatPrice(item.price)}</div>
@@ -1424,6 +1561,12 @@ function applyUI(){
   document.getElementById('mInstaSub1').innerText = UI[lang].instaSub;
   document.getElementById('mYoutubeSub').innerText = UI[lang].youtubeSub;
   document.getElementById('mFacebookSub').innerText = UI[lang].facebookSub;
+
+  document.getElementById('mCertTitle').innerText = UI[lang].certTitle;
+  document.getElementById('mCertSub').innerText = UI[lang].certSub;
+  document.getElementById('certModalTitle').innerText = UI[lang].certModalTitle;
+  document.getElementById('certName1').innerText = UI[lang].certName1;
+  document.getElementById('certName2').innerText = UI[lang].certName2;
 
   document.getElementById('mReviewTitle').innerText = UI[lang].reviewTitle;
   document.getElementById('mReviewSub').innerText   = UI[lang].reviewSub;
