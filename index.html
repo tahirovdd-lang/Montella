@@ -5,10 +5,8 @@
 <title>MONTELLA — Компания</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
-<!-- ✅ FIX #1: ЖЁСТКАЯ БАЗА ДЛЯ ВСЕХ ОТНОСИТЕЛЬНЫХ ПУТЕЙ -->
 <base href="https://tahirovdd-lang.github.io/Montella/">
 
-<!-- ✅ FIX #2: Редиректы для GitHub Pages / Telegram -->
 <script>
 (function () {
   try {
@@ -57,7 +55,6 @@
   --vh: 1vh;
   --sticky-h: 86px;
 
-  /* ✅ Accent */
   --accent:#1E3A8A;
   --accent2:#1D4ED8;
 
@@ -117,17 +114,35 @@ body{
 
 /* header */
 .header{
-  padding:16px 12px 26px;
+  padding:12px 12px 14px;
   background:linear-gradient(180deg, rgba(11,11,12,.98), rgba(11,11,12,.92));
   border-bottom:1px solid rgba(255,255,255,.12);
   box-shadow:0 12px 26px rgba(0,0,0,.55);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;text-align:center;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
   color:var(--header-text);
+  gap:12px;
+  min-height:110px;
+}
+.header-left{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  padding-left:2px;
+  padding-right:70px;
+  flex:1 1 auto;
+  min-width:0;
 }
 .header img{
-  position:absolute;left:12px;
-  width:88px;height:88px;
+  position:absolute;
+  right:48px;
+  top:50%;
+  transform:translateY(-50%);
+  width:74px;
+  height:74px;
   object-fit:cover;
   border-radius:50%;
   background:rgba(255,255,255,.08);
@@ -136,40 +151,33 @@ body{
   box-shadow:0 14px 30px rgba(0,0,0,.55);
 }
 
-.brand-wrap{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-  transform: translateX(10px);
-}
 .brand-title{
-  font-size:30px;line-height:1;letter-spacing:.6px;font-weight:900;
+  font-size:27px;
+  line-height:1;
+  letter-spacing:.6px;
+  font-weight:900;
   color:var(--header-text);
 }
 .brand-slogan{
+  margin-top:4px;
   font-weight:900;
   font-size:14px;
-  letter-spacing:.4px;
+  letter-spacing:.2px;
   line-height:1.15;
   color:rgba(255,255,255,.95);
 }
-.brand-title2{
-  font-weight:800;
+.brand-phone{
+  margin-top:6px;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.brand-phone a{
+  color:rgba(255,255,255,.92);
+  text-decoration:none;
   font-size:14px;
-  letter-spacing:1.6px;
-  line-height:1.15;
-  color:rgba(255,255,255,.82);
+  font-weight:800;
 }
-.brand-title3{
-  font-weight:900;
-  font-size:13px;
-  letter-spacing:1.1px;
-  line-height:1.15;
-  color:rgba(255,255,255,.78);
-}
-.brand-phone{margin-top:2px;display:flex;flex-direction:column;gap:2px;}
-.brand-phone a{color:rgba(255,255,255,.92);text-decoration:none;font-size:14px;font-weight:800;}
 .welcome{
   margin-top:6px;
   font-weight:900;
@@ -184,8 +192,14 @@ body{
 
 /* header actions */
 .header-actions{
-  position:absolute;right:8px;top:12px;bottom:12px;
-  display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;
+  position:absolute;
+  right:8px;
+  top:10px;
+  bottom:10px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-end;
   z-index:90;
 }
 .act-btn{
@@ -478,61 +492,43 @@ body{
   .consult-card{width:94%;}
 }
 @media (max-width:420px){
-  .brand-title{font-size:28px;}
-  .brand-slogan{font-size:13px;}
-  .brand-title2{font-size:13px;}
-  .brand-wrap{transform: translateX(8px);}
-  .header{padding:14px 10px 24px;}
+  .header{
+    padding:10px 10px 12px;
+    min-height:100px;
+  }
+  .header img{
+    width:66px;
+    height:66px;
+    right:46px;
+  }
+  .brand-title{font-size:24px;}
+  .brand-slogan{font-size:12.5px;}
+  .header-left{padding-right:62px;}
   .input{width:92%;}
   .products{gap:14px;}
 }
 @media (max-width:360px){
-  .header img{width:78px;height:78px;left:10px;}
-  .brand-title{font-size:26px;}
-  .brand-slogan{font-size:12.5px;}
-  .brand-title2{font-size:12px;letter-spacing:1.3px;}
+  .header img{width:60px;height:60px;right:44px;}
+  .brand-title{font-size:22px;}
+  .brand-slogan{font-size:11.5px;}
   .brand-phone a{font-size:13px;}
   .btn{min-width:108px;padding:12px 16px;}
   .langs .btn{min-width:86px;padding:10px 10px;font-size:13px;}
+  .header-left{padding-right:56px;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ✅ Стартовое фото при открытии приложения:
-     имя файла: splash.jpg
-     положить в папку images/
-     путь: images/splash.jpg
--->
-
 <div class="splash-screen" id="splashScreen">
   <img src="images/splash.jpg" onerror="this.onerror=null;this.src='splash.jpg'" alt="Montella splash">
 </div>
 
-<!-- ✅ Файлы изображений:
-  logo.png
-  splash.jpg
-  services_logo.jpg
-  services_identity.jpg
-  services_packaging.jpg
-  services_catalog.jpg
-  services_print.jpg
-  services_social.jpg
-  services_photo.jpg
-  services_video.jpg
-  services_brandbook.jpg
-  services_web.jpg
--->
-
 <div class="header">
-  <img src="images/logo.png" onerror="this.src='logo.png'" alt="Montella logo">
-
-  <div class="brand-wrap">
+  <div class="header-left">
     <div class="brand-title">MONTELLA</div>
     <div class="brand-slogan" id="brandSlogan">Легкая на каждый день!</div>
-    <div class="brand-title2" id="branchTitle">КОМПАНИЯ</div>
-    <div class="brand-title3" id="branchTitle2">БРЕНД • СТИЛЬ • РАЗВИТИЕ</div>
 
     <div class="welcome" id="welcomeLine" style="display:none;"></div>
 
@@ -541,12 +537,11 @@ body{
     </div>
   </div>
 
+  <img src="images/logo.png" onerror="this.src='logo.png'" alt="Montella logo">
+
   <div class="header-actions">
     <div class="act-btn" onclick="openTopMenu()" title="Меню">
       <div class="burger"><span></span><span></span><span></span></div>
-    </div>
-    <div class="act-btn" onclick="toggleSearch()" title="Поиск">
-      <span class="act-ico">🔍</span>
     </div>
   </div>
 </div>
@@ -675,7 +670,6 @@ body{
 
 <div class="products" id="products"></div>
 
-<!-- ✅ Блок связи перенесён в самый низ -->
 <div class="consult-wrap" id="consultWrap">
   <div class="consult-card">
     <div class="consult-head" id="consultTitle">💬 Связаться с менеджером</div>
@@ -719,7 +713,7 @@ body{
       </div>
 
       <div class="img-modal-right" id="specBox">
-        <div class="spec-row"><div class="spec-k" id="kModel">Направление</div><div class="spec-v" id="specModel">—</div></div>
+        <div class="spec-row"><div class="spec-k" id="kModel">Категория</div><div class="spec-v" id="specModel">—</div></div>
         <div class="spec-row"><div class="spec-k" id="kRegion">Описание</div><div class="spec-v" id="specRegion">—</div></div>
       </div>
     </div>
@@ -737,23 +731,19 @@ setVH();
 window.addEventListener('resize', setVH, {passive:true});
 window.addEventListener('orientationchange', ()=>setTimeout(setVH, 250), {passive:true});
 
-/* splash hide after 5 sec */
 window.addEventListener('load', function(){
   setTimeout(function(){
     document.getElementById('splashScreen')?.classList.add('hide');
   }, 5000);
 });
 
-/* ✅ LINKS + ADMIN */
 const YANDEX_OBJ_URL = "https://yandex.uz/maps/org/6496150310/?ll=69.375703%2C41.378435&z=15";
 const REVIEW_URL = YANDEX_OBJ_URL;
 const ADMIN_ID = 6013591658;
 
-/* ✅ PHONES */
 const PHONE1_DISPLAY = "+998 (78) 777-17-71";
 const PHONE1_TEL = "tel:+998787771771";
 
-/* ✅ SOCIAL */
 const INSTAGRAM_URL = "https://www.instagram.com/montella.official/";
 const YOUTUBE_URL  = "https://www.youtube.com/@navruzinternationalcorp.4956/shorts";
 const FACEBOOK_URL = "https://www.facebook.com/Montellauz";
@@ -794,7 +784,6 @@ const tg_username = tgUser.username || "";
 const tg_first_name = tgUser.first_name || "";
 const tg_id = tgUser.id || "";
 
-/* ✅ 4 languages */
 const UI = {
   ru:{
     menu:'Меню',
@@ -807,11 +796,9 @@ const UI = {
     aboutAddr:'📍 Адрес',
     aboutPhone:'📞 Телефон', aboutHours:'🕒 График работы',
     searchResults:'Результаты поиска',
-    searchPh:'Поиск направления...',
+    searchPh:'Поиск категории...',
     welcome:'👋 Добро пожаловать',
     slogan:'Легкая на каждый день!',
-    brandSub1:'КОМПАНИЯ',
-    brandSub2:'БРЕНД • СТИЛЬ • РАЗВИТИЕ',
     popular:'🔥 Популярное',
     consult:'💬 Связаться с менеджером',
     consultSub:'Пример: Хочу заказать доставку',
@@ -824,7 +811,7 @@ const UI = {
     consultHint:'Сначала укажите номер телефона, затем отправьте запрос менеджеру.',
     nothingFound:'Ничего не найдено',
     priceFrom:'Подробнее',
-    kModel:'Направление',
+    kModel:'Категория',
     kRegion:'Описание'
   },
   uz:{
@@ -838,11 +825,9 @@ const UI = {
     aboutAddr:'📍 Manzil',
     aboutPhone:'📞 Telefon', aboutHours:'🕒 Ish vaqti',
     searchResults:'Qidiruv natijalari',
-    searchPh:"Yo‘nalishni qidirish...",
+    searchPh:'Kategoriya qidirish...',
     welcome:'👋 Xush kelibsiz',
     slogan:'Har kun uchun yengillik!',
-    brandSub1:'KOMPANIYA',
-    brandSub2:'BREND • USLUB • RIVOJLANISH',
     popular:'🔥 Ommabop',
     consult:'💬 Menejer bilan aloqa',
     consultSub:'Misol: Yetkazib berishga buyurtma bermoqchiman',
@@ -855,7 +840,7 @@ const UI = {
     consultHint:'Avval telefon raqamingizni kiriting, keyin so‘rov yuboring.',
     nothingFound:'Hech narsa topilmadi',
     priceFrom:'Batafsil',
-    kModel:'Yo‘nalish',
+    kModel:'Kategoriya',
     kRegion:'Tavsif'
   },
   en:{
@@ -869,11 +854,9 @@ const UI = {
     aboutAddr:'📍 Address',
     aboutPhone:'📞 Phone', aboutHours:'🕒 Working hours',
     searchResults:'Search results',
-    searchPh:'Search direction...',
+    searchPh:'Search category...',
     welcome:'👋 Welcome',
     slogan:'Light for every day!',
-    brandSub1:'COMPANY',
-    brandSub2:'BRAND • STYLE • GROWTH',
     popular:'🔥 Popular',
     consult:'💬 Contact manager',
     consultSub:'Example: I want to order delivery',
@@ -886,7 +869,7 @@ const UI = {
     consultHint:'Enter your phone number first, then send the request.',
     nothingFound:'Nothing found',
     priceFrom:'Learn more',
-    kModel:'Direction',
+    kModel:'Category',
     kRegion:'Description'
   },
   tj:{
@@ -900,11 +883,9 @@ const UI = {
     aboutAddr:'📍 Суроға',
     aboutPhone:'📞 Телефон', aboutHours:'🕒 Соатҳои кор',
     searchResults:'Натиҷаҳои ҷустуҷӯ',
-    searchPh:'Ҷустуҷӯи самт...',
+    searchPh:'Ҷустуҷӯи категория...',
     welcome:'👋 Хуш омадед',
     slogan:'Сабукӣ барои ҳар рӯз!',
-    brandSub1:'КОМПАНИЯ',
-    brandSub2:'БРЕНД • УСЛУБ • РУШД',
     popular:'🔥 Маъмул',
     consult:'💬 Тамос бо менеҷер',
     consultSub:'Мисол: Мехоҳам доставка фармоиш диҳам',
@@ -917,7 +898,7 @@ const UI = {
     consultHint:'Аввал рақами телефонро ворид кунед, баъд дархостро фиристед.',
     nothingFound:'Ягон чиз ёфт нашуд',
     priceFrom:'Муфассал',
-    kModel:'Самт',
+    kModel:'Категория',
     kRegion:'Тавсиф'
   }
 };
@@ -925,22 +906,16 @@ const UI = {
 function mkName(ru, uz, en, tj){ return {ru, uz, en, tj}; }
 
 const SERVICES = [
-  { id:'brand',      img:'images/services_logo.jpg',       n: mkName('Бренд','Brend','Brand','Бренд'), desc: mkName('Развитие бренда и позиционирование компании','Brendni rivojlantirish va pozitsiyalash','Brand development and positioning','Рушди бренд ва мавқеъгузорӣ') },
-  { id:'identity',   img:'images/services_identity.jpg',   n: mkName('Фирменный стиль','Korporativ uslub','Corporate identity','Услуби корпоративӣ'), desc: mkName('Логотип, цвета, визуальная система','Logo, ranglar, vizual tizim','Logo, colors, visual system','Лого, рангҳо, системаи визуалӣ') },
-  { id:'packaging',  img:'images/services_packaging.jpg',  n: mkName('Упаковка','Qadoqlash','Packaging','Бастабандӣ'), desc: mkName('Дизайн упаковки и оформление продукции','Qadoqlash dizayni va mahsulot ko‘rinishi','Packaging design and product styling','Дизайни бастабандӣ ва намуди маҳсулот') },
-  { id:'catalog',    img:'images/services_catalog.jpg',    n: mkName('Каталог','Katalog','Catalog','Каталог'), desc: mkName('Каталоги, презентации, коммерческие материалы','Katalog, taqdimot, tijorat materiallari','Catalogs, presentations, sales materials','Каталог, презентатсия ва маводи тиҷоратӣ') },
-  { id:'print',      img:'images/services_print.jpg',      n: mkName('Полиграфия','Poligrafiya','Print products','Полиграфия'), desc: mkName('Печатные материалы для бизнеса','Biznes uchun bosma materiallar','Printed materials for business','Маводи чопӣ барои бизнес') },
-  { id:'social',     img:'images/services_social.jpg',     n: mkName('Соцсети','Ijtimoiy tarmoqlar','Social media','Шабакаҳои иҷтимоӣ'), desc: mkName('Контент и визуал для социальных сетей','Ijtimoiy tarmoqlar uchun kontent va vizual','Content and visuals for social media','Контент ва визуал барои шабакаҳои иҷтимоӣ') },
-  { id:'photo',      img:'images/services_photo.jpg',      n: mkName('Фото','Foto','Photo','Фото'), desc: mkName('Предметная и брендовая съёмка','Predmet va brend uchun suratga olish','Product and brand photography','Наворгирии маҳсулот ва бренд') },
-  { id:'video',      img:'images/services_video.jpg',      n: mkName('Видео','Video','Video','Видео'), desc: mkName('Рекламные и имиджевые ролики','Reklama va imidj videolari','Promo and image videos','Роликҳои рекламавӣ ва имиджӣ') },
-  { id:'brandbook',  img:'images/services_brandbook.jpg',  n: mkName('Брендбук','Brendbuk','Brandbook','Брендбук'), desc: mkName('Правила использования бренда','Brenddan foydalanish qoidalari','Brand usage guidelines','Қоидаҳои истифодаи бренд') },
-  { id:'web',        img:'images/services_web.jpg',        n: mkName('Веб','Veb','Web','Веб'), desc: mkName('Сайт, лендинг, онлайн-презентация','Sayt, lending, online taqdimot','Website, landing, online presentation','Сайт, лендинг, презентатсияи онлайн') }
+  { id:'water',      img:'images/services_water.jpg',      n: mkName('Минеральная вода','Mineral suv','Mineral water','Оби минералӣ'), desc: mkName('Освежающая минеральная вода на каждый день','Har kun uchun tetiklashtiruvchi mineral suv','Refreshing mineral water for every day','Оби минералии тароватбахш барои ҳар рӯз') },
+  { id:'energy',     img:'images/services_energy.jpg',     n: mkName('Энергетические напитки','Energetik ichimliklar','Energy drinks','Нӯшокиҳои энергетикӣ'), desc: mkName('Энергетические напитки для бодрости и активности','Tetiklik va faollik uchun energetik ichimliklar','Energy drinks for power and activity','Нӯшокиҳои энергетикӣ барои нерӯ ва фаъолият') },
+  { id:'tea',        img:'images/services_tea.jpg',        n: mkName('Чай','Choy','Tea','Чой'), desc: mkName('Классический и ароматный чай','An’anaviy va xushbo‘y choy','Classic and aromatic tea','Чои классикӣ ва хушбӯй') },
+  { id:'juice',      img:'images/services_juice.jpg',      n: mkName('Сок','Sharbat','Juice','Шарбат'), desc: mkName('Натуральные соки с ярким вкусом','Yorqin ta’mli tabiiy sharbatlar','Natural juices with rich taste','Шарбатҳои табиӣ бо таъми бой') }
 ];
 
 const ITEM_INDEX = {};
 SERVICES.forEach(it => ITEM_INDEX[it.id]=it);
 
-const POPULAR = ['brand','identity','packaging','social','web'].filter(id=>ITEM_INDEX[id]);
+const POPULAR = ['water','energy','tea','juice'].filter(id=>ITEM_INDEX[id]);
 
 let lang='ru';
 
@@ -1187,10 +1162,10 @@ function applyUI(){
   document.getElementById('aboutAddrText').innerText   = ABOUT_ADDR;
 
   document.getElementById('aboutDescText').innerHTML =
-    (lang==='ru' ? `Montella — современная компания.<br>Бренд, стиль, визуальная подача, развитие и презентация компании.<br><br><b>📍 Адрес:</b> ${ABOUT_ADDR}<br><b>🕒 График:</b><br>ПН-ПТ с 09:00-18:00<br>Суббота — Выходной<br>Воскресенье — Выходной`
-    : lang==='uz' ? `Montella — zamonaviy kompaniya.<br>Brend, uslub, vizual taqdimot va kompaniya rivoji.<br><br><b>📍 Manzil:</b> ${ABOUT_ADDR}<br><b>🕒 Ish vaqti:</b><br>Dushanba-Juma 09:00-18:00<br>Shanba — Dam olish<br>Yakshanba — Dam olish`
-    : lang==='tj' ? `Montella — ширкати муосир.<br>Бренд, услуб, пешниҳоди визуалӣ ва рушди ширкат.<br><br><b>📍 Суроға:</b> ${ABOUT_ADDR}<br><b>🕒 Соатҳои кор:</b><br>Душанбе-Ҷумъа 09:00-18:00<br>Шанбе — Истироҳат<br>Якшанбе — Истироҳат`
-    : `Montella — a modern company.<br>Brand, style, visual presentation and company growth.<br><br><b>📍 Address:</b> ${ABOUT_ADDR}<br><b>🕒 Hours:</b><br>Mon-Fri 09:00-18:00<br>Saturday — Closed<br>Sunday — Closed`);
+    (lang==='ru' ? `Montella — современная компания.<br><br><b>📍 Адрес:</b> ${ABOUT_ADDR}<br><b>🕒 График:</b><br>ПН-ПТ с 09:00-18:00<br>Суббота — Выходной<br>Воскресенье — Выходной`
+    : lang==='uz' ? `Montella — zamonaviy kompaniya.<br><br><b>📍 Manzil:</b> ${ABOUT_ADDR}<br><b>🕒 Ish vaqti:</b><br>Dushanba-Juma 09:00-18:00<br>Shanba — Dam olish<br>Yakshanba — Dam olish`
+    : lang==='tj' ? `Montella — ширкати муосир.<br><br><b>📍 Суроға:</b> ${ABOUT_ADDR}<br><b>🕒 Соатҳои кор:</b><br>Душанбе-Ҷумъа 09:00-18:00<br>Шанбе — Истироҳат<br>Якшанбе — Истироҳат`
+    : `Montella — a modern company.<br><br><b>📍 Address:</b> ${ABOUT_ADDR}<br><b>🕒 Hours:</b><br>Mon-Fri 09:00-18:00<br>Saturday — Closed<br>Sunday — Closed`);
 
   document.getElementById('popularTitle').innerText = UI[lang].popular;
 
@@ -1201,8 +1176,6 @@ function applyUI(){
   document.getElementById('consultBtn').innerText = UI[lang].consultBtn;
   document.getElementById('consultHint').innerText = UI[lang].consultHint;
 
-  document.getElementById('branchTitle').innerText  = UI[lang].brandSub1;
-  document.getElementById('branchTitle2').innerText = UI[lang].brandSub2;
   document.getElementById('brandSlogan').innerText = UI[lang].slogan;
 
   document.getElementById('kModel').innerText  = UI[lang].kModel;
