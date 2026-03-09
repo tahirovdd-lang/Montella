@@ -197,7 +197,7 @@ body{
   transform:translateY(-50%);
   border:none;
   border-radius:16px;
-  padding:10px 12px;
+  padding:10px 14px;
   background:linear-gradient(180deg, var(--accent), var(--accent2));
   color:#fff;
   font-size:12px;
@@ -205,7 +205,7 @@ body{
   cursor:pointer;
   box-shadow:0 10px 24px rgba(0,0,0,.40);
   white-space:nowrap;
-  max-width:126px;
+  min-width:96px;
   line-height:1.15;
 }
 .header-manager-btn:active{transform:translateY(-50%) scale(.98);}
@@ -288,7 +288,12 @@ body{
   color:#fff;
 }
 
-.products{display:grid;grid-template-columns:1fr;gap:16px;padding:12px;}
+.products{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:16px;
+  padding:12px;
+}
 
 /* category cards */
 .category-card{
@@ -298,6 +303,7 @@ body{
   border:1px solid var(--stroke2);
   box-shadow: 0 12px 26px rgba(0,0,0,.55);
   color:#E5E7EB;
+  min-width:0;
 }
 .category-head{
   display:flex;
@@ -313,6 +319,7 @@ body{
   border-radius:18px;
   border:1px solid rgba(255,255,255,.12);
   background:rgba(255,255,255,.06);
+  flex:0 0 auto;
 }
 .category-title{
   font-size:18px;
@@ -658,28 +665,15 @@ body{
 .consult-send:active{transform:scale(.98);}
 
 /* responsive */
-@media (min-width:768px){
+@media (min-width:1024px){
   .products{
     grid-template-columns:repeat(2, minmax(0,1fr));
   }
-  .cart-wrap,
-  .consult-wrap,
-  .popular-wrap,
-  .langs{
-    max-width:1200px;
-    margin:0 auto;
-  }
-}
-@media (min-width:1024px){
-  .products{
-    grid-template-columns:repeat(3, minmax(0,1fr));
-  }
   .sheet-grid{
-    grid-template-columns:repeat(3, minmax(0,1fr));
+    grid-template-columns:repeat(2, minmax(0,1fr));
   }
 }
 @media (max-width:767px){
-  .sheet-grid{grid-template-columns:1fr;}
   .cert-grid{grid-template-columns:1fr;}
   .cert-card img{height:260px;}
 }
@@ -695,13 +689,32 @@ body{
   }
   .header-manager-btn{
     right:116px;
-    max-width:100px;
+    min-width:82px;
     font-size:10.5px;
     padding:8px 10px;
   }
   .brand-title{font-size:24px;}
   .brand-slogan{font-size:12.5px;}
   .header-left{padding-right:158px;}
+  .products{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:12px;
+  }
+  .sheet-grid{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:10px;
+  }
+  .category-head{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .category-head img{
+    width:100%;
+    height:120px;
+    border-radius:18px;
+  }
+  .category-title{font-size:16px;}
+  .category-desc{font-size:12px;}
 }
 @media (max-width:390px){
   .header{
@@ -714,7 +727,7 @@ body{
   }
   .header-manager-btn{
     right:106px;
-    max-width:90px;
+    min-width:76px;
     font-size:10px;
     padding:7px 8px;
   }
@@ -745,7 +758,7 @@ body{
   </div>
 
   <button class="header-manager-btn" type="button" onclick="scrollToConsult()">
-    <span id="headerManagerText">Связаться с менеджером</span>
+    <span id="headerManagerText">Связаться</span>
   </button>
 
   <img class="header-logo" src="images/logo.jpg" onerror="this.onerror=null;this.src='images/logo.png'" alt="Montella logo">
@@ -1086,7 +1099,7 @@ const UI = {
     cartCount:'Товаров',
     cartSum:'Сумма',
     cartEmpty:'Выберите товары кнопками + и −',
-    managerHeader:'Связаться с менеджером',
+    managerHeader:'Связаться',
     fromPrice:'от'
   },
   uz:{
@@ -1124,7 +1137,7 @@ const UI = {
     cartCount:'Tovarlar',
     cartSum:'Jami',
     cartEmpty:'Tovarlarni + va − tugmalari bilan tanlang',
-    managerHeader:'Menejer bilan aloqa',
+    managerHeader:'Bog‘lanish',
     fromPrice:'dan'
   },
   en:{
@@ -1162,7 +1175,7 @@ const UI = {
     cartCount:'Items',
     cartSum:'Total',
     cartEmpty:'Choose products with + and − buttons',
-    managerHeader:'Contact manager',
+    managerHeader:'Contact',
     fromPrice:'from'
   },
   tj:{
@@ -1200,7 +1213,7 @@ const UI = {
     cartCount:'Молҳо',
     cartSum:'Ҷамъ',
     cartEmpty:'Молҳоро бо тугмаҳои + ва − интихоб кунед',
-    managerHeader:'Тамос бо менеҷер',
+    managerHeader:'Тамос',
     fromPrice:'аз'
   }
 };
