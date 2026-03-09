@@ -94,6 +94,7 @@ body{
   align-items:center;
   justify-content:center;
   opacity:1;
+  visibility:visible;
   transition:opacity .45s ease, visibility .45s ease;
 }
 .splash-screen.hide{
@@ -411,7 +412,18 @@ body{
 }
 
 /* popup */
-.popup{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;z-index:3000;}
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  z-index:3000;
+}
 .popup.show{opacity:1;pointer-events:auto;}
 .popup-box{
   background: rgba(15,23,42,.96);
@@ -716,7 +728,7 @@ body{
 
 <body>
 
-<div class="splash-screen" id="splashScreen">
+<div class="splash-screen" id="splashScreen" onclick="hideSplash()">
   <img src="images/splash.jpg" onerror="this.onerror=null;this.src='splash.jpg'" alt="Montella splash">
 </div>
 
@@ -736,7 +748,7 @@ body{
     <span id="headerManagerText">Связаться с менеджером</span>
   </button>
 
-  <img class="header-logo" src="images/logo.jpg" onerror="this.src='images/logo.png'" alt="Montella logo">
+  <img class="header-logo" src="images/logo.jpg" onerror="this.onerror=null;this.src='images/logo.png'" alt="Montella logo">
 
   <div class="header-actions">
     <div class="act-btn" onclick="openTopMenu()" title="Меню">
@@ -959,18 +971,26 @@ body{
 
 <script>
 Telegram.WebApp.ready();
-try{ Telegram.WebApp.expand(); Telegram.WebApp.disableVerticalSwipes?.(); }catch(_){}
+try{
+  Telegram.WebApp.expand();
+  Telegram.WebApp.disableVerticalSwipes?.();
+  Telegram.WebApp.setHeaderColor?.('#0B0B0C');
+  Telegram.WebApp.setBackgroundColor?.('#000000');
+}catch(_){}
 
 function setVH(){ document.documentElement.style.setProperty('--vh', (window.innerHeight*0.01)+'px'); }
 setVH();
 window.addEventListener('resize', setVH, {passive:true});
 window.addEventListener('orientationchange', ()=>setTimeout(setVH, 250), {passive:true});
 
+function hideSplash(){
+  const splash = document.getElementById('splashScreen');
+  if(splash) splash.classList.add('hide');
+}
 window.addEventListener('load', function(){
-  setTimeout(function(){
-    document.getElementById('splashScreen')?.classList.add('hide');
-  }, 5000);
+  setTimeout(hideSplash, 2200);
 });
+setTimeout(hideSplash, 3000);
 
 const REVIEW_URL = "https://yandex.uz/maps/org/6496150310/?ll=69.375703%2C41.378435&z=15";
 const ADMIN_ID = 6013591658;
@@ -983,7 +1003,7 @@ const ABOUT_ADDR = "г. Самарканд, ваш адрес";
 const ABOUT_HOURS = "ПН-ПТ с 09:00-18:00\nСуббота — Выходной\nВоскресенье — Выходной";
 
 function openLink(url){
-  try{Telegram.WebApp.openLink(url);}catch(_){window.open(url,'_blank');}
+  try{ Telegram.WebApp.openLink(url); }catch(_){ window.open(url,'_blank'); }
 }
 function openReview(e){
   try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
@@ -1016,11 +1036,13 @@ function scrollToConsult(){
 function openCertificates(e){
   try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
   closeTopMenu();
-  document.getElementById('certModal').classList.add('show');
+  const m = document.getElementById('certModal');
+  if(m) m.classList.add('show');
 }
 function closeCertificates(e){
   try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
-  document.getElementById('certModal').classList.remove('show');
+  const m = document.getElementById('certModal');
+  if(m) m.classList.remove('show');
 }
 
 const tgUser = Telegram.WebApp.initDataUnsafe?.user || {};
@@ -1270,29 +1292,46 @@ function formatPrice(v){
   return Number(v).toLocaleString('ru-RU') + ' сум';
 }
 
-function isSearchOpen(){ return document.getElementById('searchWrap').style.display === 'flex'; }
+function isSearchOpen(){ 
+  const el = document.getElementById('searchWrap');
+  return el && el.style.display === 'flex';
+}
 function toggleSearch(){ isSearchOpen()?closeSearch():openSearch(); }
 function openSearch(){
   closeTopMenu();
-  document.getElementById('searchWrap').style.display='flex';
-  document.getElementById('searchTitle').style.display='block';
-  const inp=document.getElementById('searchInput');
-  inp.value='';
-  inp.placeholder = UI[lang].searchPh;
-  inp.focus();
+  const sw = document.getElementById('searchWrap');
+  const st = document.getElementById('searchTitle');
+  const inp = document.getElementById('searchInput');
+  if(sw) sw.style.display='flex';
+  if(st) st.style.display='block';
+  if(inp){
+    inp.value='';
+    inp.placeholder = UI[lang].searchPh;
+    inp.focus();
+  }
   searchProducts();
 }
 function closeSearch(){
-  document.getElementById('searchWrap').style.display='none';
-  document.getElementById('searchTitle').style.display='none';
-  document.getElementById('searchInput').value='';
+  const sw = document.getElementById('searchWrap');
+  const st = document.getElementById('searchTitle');
+  const inp = document.getElementById('searchInput');
+  if(sw) sw.style.display='none';
+  if(st) st.style.display='none';
+  if(inp) inp.value='';
   renderProducts();
 }
 function clearSearch(){ closeSearch(); }
 function onSearchKey(e){ if(e.key==='Enter') searchProducts(); }
 
-function openTopMenu(){ closeSearch(); document.getElementById('menuBackdrop').classList.add('show'); document.getElementById('menuSheet').classList.add('show'); }
-function closeTopMenu(){ document.getElementById('menuBackdrop').classList.remove('show'); document.getElementById('menuSheet').classList.remove('show'); }
+function openTopMenu(){
+  closeSearch();
+  document.getElementById('menuBackdrop')?.classList.add('show');
+  document.getElementById('menuSheet')?.classList.add('show');
+}
+function closeTopMenu(){
+  document.getElementById('menuBackdrop')?.classList.remove('show');
+  document.getElementById('menuSheet')?.classList.remove('show');
+}
 
 function qtyOf(id){ return CART[id] || 0; }
 function setQty(id, val){
@@ -1323,10 +1362,14 @@ function getCartStats(){
 }
 function updateCartSummary(){
   const stats = getCartStats();
-  document.getElementById('cartTotal').textContent = formatPrice(stats.sum);
-  document.getElementById('cartCountPill').textContent = `${UI[lang].cartCount}: ${stats.count}`;
-  document.getElementById('cartSumPill').textContent = `${UI[lang].cartSum}: ${formatPrice(stats.sum)}`;
-  document.getElementById('cartEmpty').textContent = stats.count ? `${UI[lang].cartCount}: ${stats.count}` : UI[lang].cartEmpty;
+  const ct = document.getElementById('cartTotal');
+  const c1 = document.getElementById('cartCountPill');
+  const c2 = document.getElementById('cartSumPill');
+  const ce = document.getElementById('cartEmpty');
+  if(ct) ct.textContent = formatPrice(stats.sum);
+  if(c1) c1.textContent = `${UI[lang].cartCount}: ${stats.count}`;
+  if(c2) c2.textContent = `${UI[lang].cartSum}: ${formatPrice(stats.sum)}`;
+  if(ce) ce.textContent = stats.count ? `${UI[lang].cartCount}: ${stats.count}` : UI[lang].cartEmpty;
 }
 
 function categoryHTML(cat, hasMatch){
@@ -1347,6 +1390,7 @@ function categoryHTML(cat, hasMatch){
 
 function renderProducts(filterText=''){
   const box=document.getElementById('products');
+  if(!box) return;
   box.innerHTML='';
 
   const q = (filterText || '').trim().toLowerCase();
@@ -1376,7 +1420,7 @@ function renderProducts(filterText=''){
 }
 
 function searchProducts(){
-  const q=(document.getElementById('searchInput').value||'').trim();
+  const q=(document.getElementById('searchInput')?.value||'').trim();
   renderProducts(q);
 }
 
@@ -1391,6 +1435,7 @@ function popCardHTML(it){
 }
 function renderPopular(){
   const row=document.getElementById('popularRow');
+  if(!row) return;
   row.innerHTML='';
   POPULAR.forEach(id=>{
     const it=ITEM_INDEX[id]; if(!it) return;
@@ -1403,10 +1448,13 @@ function openCategorySheet(catId){
   if(!cat) return;
   currentSheetCategory = catId;
 
-  document.getElementById('sheetTitle').textContent = nameOfCategory(catId);
-  document.getElementById('sheetSub').textContent = descOfCategory(catId);
-
+  const title = document.getElementById('sheetTitle');
+  const sub = document.getElementById('sheetSub');
   const grid = document.getElementById('sheetGrid');
+  if(title) title.textContent = nameOfCategory(catId);
+  if(sub) sub.textContent = descOfCategory(catId);
+  if(!grid) return;
+
   grid.innerHTML = cat.items.map(item => `
     <div class="sheet-item">
       <img class="sheet-item-img" src="${item.img || cat.img}" onerror="this.onerror=null;this.src='images/logo.jpg'" alt="">
@@ -1424,18 +1472,19 @@ function openCategorySheet(catId){
     </div>
   `).join('');
 
-  document.getElementById('productSheetBackdrop').classList.add('show');
-  document.getElementById('productSheet').classList.add('show');
+  document.getElementById('productSheetBackdrop')?.classList.add('show');
+  document.getElementById('productSheet')?.classList.add('show');
 }
 function closeCategorySheet(){
-  document.getElementById('productSheetBackdrop').classList.remove('show');
-  document.getElementById('productSheet').classList.remove('show');
+  document.getElementById('productSheetBackdrop')?.classList.remove('show');
+  document.getElementById('productSheet')?.classList.remove('show');
 }
 
 let toastTimer=null;
 function showToast(t){
   const p=document.getElementById('popup');
   const tx=document.getElementById('popupText');
+  if(!p || !tx) return;
   p.classList.add('show');
   tx.innerText = t || "✅";
   clearTimeout(toastTimer);
@@ -1444,7 +1493,7 @@ function showToast(t){
 
 function requestPhoneFirst(){
   const phoneInput = document.getElementById('consultPhone');
-  if(phoneInput.style.display !== 'block'){
+  if(phoneInput && phoneInput.style.display !== 'block'){
     phoneInput.style.display = 'block';
     phoneInput.placeholder = UI[lang].consultPhonePh;
     setTimeout(()=>phoneInput.focus(), 50);
@@ -1532,7 +1581,8 @@ function sendConsultMain(e){
     Telegram.WebApp.HapticFeedback?.notificationOccurred?.('success');
     Telegram.WebApp.sendData(JSON.stringify(payload));
     showToast(UI[lang].consultSent);
-    document.getElementById('consultInput').value='';
+    const ci = document.getElementById('consultInput');
+    if(ci) ci.value='';
   }catch(_){
     showToast("✅");
   }
@@ -1549,60 +1599,67 @@ function renderWelcome(){
 
 function toggleAbout(){
   const w=document.getElementById('aboutWrap');
+  if(!w) return;
   w.style.display=(w.style.display==='none'||!w.style.display)?'block':'none';
 }
 
+function setText(id, value){
+  const el = document.getElementById(id);
+  if(el) el.innerText = value;
+}
+function setHTML(id, value){
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = value;
+}
+
 function applyUI(){
-  document.getElementById('menuTitle').innerText = UI[lang].menu;
+  setText('menuTitle', UI[lang].menu);
+  setText('mCallTitle', UI[lang].callTitle);
+  setText('mCallSub', UI[lang].callSub);
+  setText('mInstaSub1', UI[lang].instaSub);
+  setText('mYoutubeSub', UI[lang].youtubeSub);
+  setText('mFacebookSub', UI[lang].facebookSub);
+  setText('mCertTitle', UI[lang].certTitle);
+  setText('mCertSub', UI[lang].certSub);
+  setText('certModalTitle', UI[lang].certModalTitle);
+  setText('certName1', UI[lang].certName1);
+  setText('certName2', UI[lang].certName2);
+  setText('mReviewTitle', UI[lang].reviewTitle);
+  setText('mReviewSub', UI[lang].reviewSub);
+  setText('mAboutTitle', UI[lang].aboutTitle);
+  setText('mAboutSub', UI[lang].aboutSub);
+  setText('aboutAddrLabel', UI[lang].aboutAddr);
+  setText('aboutPhoneLabel', UI[lang].aboutPhone);
+  setText('aboutHoursLabel', UI[lang].aboutHours);
+  setText('aboutHoursText', ABOUT_HOURS);
+  setText('aboutAddrText', ABOUT_ADDR);
 
-  document.getElementById('mCallTitle').innerText = UI[lang].callTitle;
-  document.getElementById('mCallSub').innerText   = UI[lang].callSub;
+  setHTML(
+    'aboutDescText',
+    lang==='ru'
+      ? `Montella — современная компания.<br><br><b>📍 Адрес:</b> ${ABOUT_ADDR}<br><b>🕒 График:</b><br>ПН-ПТ с 09:00-18:00<br>Суббота — Выходной<br>Воскресенье — Выходной`
+      : lang==='uz'
+      ? `Montella — zamonaviy kompaniya.<br><br><b>📍 Manzil:</b> ${ABOUT_ADDR}<br><b>🕒 Ish vaqti:</b><br>Dushanba-Juma 09:00-18:00<br>Shanba — Dam olish<br>Yakshanba — Dam olish`
+      : lang==='tj'
+      ? `Montella — ширкати муосир.<br><br><b>📍 Суроға:</b> ${ABOUT_ADDR}<br><b>🕒 Соатҳои кор:</b><br>Душанбе-Ҷумъа 09:00-18:00<br>Шанбе — Истироҳат<br>Якшанбе — Истироҳат`
+      : `Montella — a modern company.<br><br><b>📍 Address:</b> ${ABOUT_ADDR}<br><b>🕒 Hours:</b><br>Mon-Fri 09:00-18:00<br>Saturday — Closed<br>Sunday — Closed`
+  );
 
-  document.getElementById('mInstaSub1').innerText = UI[lang].instaSub;
-  document.getElementById('mYoutubeSub').innerText = UI[lang].youtubeSub;
-  document.getElementById('mFacebookSub').innerText = UI[lang].facebookSub;
-
-  document.getElementById('mCertTitle').innerText = UI[lang].certTitle;
-  document.getElementById('mCertSub').innerText = UI[lang].certSub;
-  document.getElementById('certModalTitle').innerText = UI[lang].certModalTitle;
-  document.getElementById('certName1').innerText = UI[lang].certName1;
-  document.getElementById('certName2').innerText = UI[lang].certName2;
-
-  document.getElementById('mReviewTitle').innerText = UI[lang].reviewTitle;
-  document.getElementById('mReviewSub').innerText   = UI[lang].reviewSub;
-
-  document.getElementById('mAboutTitle').innerText = UI[lang].aboutTitle;
-  document.getElementById('mAboutSub').innerText   = UI[lang].aboutSub;
-
-  document.getElementById('aboutAddrLabel').innerText  = UI[lang].aboutAddr;
-  document.getElementById('aboutPhoneLabel').innerText = UI[lang].aboutPhone;
-  document.getElementById('aboutHoursLabel').innerText = UI[lang].aboutHours;
-  document.getElementById('aboutHoursText').innerText  = ABOUT_HOURS;
-  document.getElementById('aboutAddrText').innerText   = ABOUT_ADDR;
-
-  document.getElementById('aboutDescText').innerHTML =
-    (lang==='ru' ? `Montella — современная компания.<br><br><b>📍 Адрес:</b> ${ABOUT_ADDR}<br><b>🕒 График:</b><br>ПН-ПТ с 09:00-18:00<br>Суббота — Выходной<br>Воскресенье — Выходной`
-    : lang==='uz' ? `Montella — zamonaviy kompaniya.<br><br><b>📍 Manzil:</b> ${ABOUT_ADDR}<br><b>🕒 Ish vaqti:</b><br>Dushanba-Juma 09:00-18:00<br>Shanba — Dam olish<br>Yakshanba — Dam olish`
-    : lang==='tj' ? `Montella — ширкати муосир.<br><br><b>📍 Суроға:</b> ${ABOUT_ADDR}<br><b>🕒 Соатҳои кор:</b><br>Душанбе-Ҷумъа 09:00-18:00<br>Шанбе — Истироҳат<br>Якшанбе — Истироҳат`
-    : `Montella — a modern company.<br><br><b>📍 Address:</b> ${ABOUT_ADDR}<br><b>🕒 Hours:</b><br>Mon-Fri 09:00-18:00<br>Saturday — Closed<br>Sunday — Closed`);
-
-  document.getElementById('popularTitle').innerText = UI[lang].popular;
-
-  document.getElementById('consultTitle').innerText = UI[lang].consult;
-  document.getElementById('consultSub').innerText   = UI[lang].consultSub;
-  document.getElementById('consultInput').placeholder = UI[lang].consultPh;
-  document.getElementById('consultPhone').placeholder = UI[lang].consultPhonePh;
-  document.getElementById('consultBtn').innerText = UI[lang].consultBtn;
-  document.getElementById('consultHint').innerText = UI[lang].consultHint;
-
-  document.getElementById('brandSlogan').innerText = UI[lang].slogan;
-  document.getElementById('headerManagerText').innerText = UI[lang].managerHeader;
-
-  document.getElementById('cartTitle').innerText = UI[lang].cart;
-
-  const st=document.getElementById('searchTitle');
-  st.innerText = UI[lang].searchResults;
-  document.getElementById('searchInput').placeholder = UI[lang].searchPh;
+  setText('popularTitle', UI[lang].popular);
+  setText('consultTitle', UI[lang].consult);
+  setText('consultSub', UI[lang].consultSub);
+  const consultInput = document.getElementById('consultInput');
+  if(consultInput) consultInput.placeholder = UI[lang].consultPh;
+  const consultPhone = document.getElementById('consultPhone');
+  if(consultPhone) consultPhone.placeholder = UI[lang].consultPhonePh;
+  setText('consultBtn', UI[lang].consultBtn);
+  setText('consultHint', UI[lang].consultHint);
+  setText('brandSlogan', UI[lang].slogan);
+  setText('headerManagerText', UI[lang].managerHeader);
+  setText('cartTitle', UI[lang].cart);
+  setText('searchTitle', UI[lang].searchResults);
+  const searchInput = document.getElementById('searchInput');
+  if(searchInput) searchInput.placeholder = UI[lang].searchPh;
 
   renderWelcome();
   renderPopular();
@@ -1617,14 +1674,9 @@ function applyUI(){
 function setLang(l,btn){
   lang=l;
   document.querySelectorAll('.langs .btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  if(btn) btn.classList.add('active');
   applyUI();
 }
-
-try{
-  Telegram.WebApp.setHeaderColor?.('#0B0B0C');
-  Telegram.WebApp.setBackgroundColor?.('#000000');
-}catch(_){}
 
 lang='ru';
 document.querySelectorAll('.langs .btn').forEach(b=>b.classList.remove('active'));
