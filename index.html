@@ -135,13 +135,13 @@ body{
   align-items:flex-start;
   justify-content:center;
   padding-left:2px;
-  padding-right:108px;
+  padding-right:170px;
   flex:1 1 auto;
   min-width:0;
 }
 .header img{
   position:absolute;
-  right:52px;
+  right:92px;
   top:50%;
   transform:translateY(-50%);
   width:74px;
@@ -153,6 +153,25 @@ body{
   border:2px solid rgba(255,255,255,.18);
   box-shadow:0 14px 30px rgba(0,0,0,.55);
 }
+.header-manager-btn{
+  position:absolute;
+  right:136px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  border-radius:16px;
+  padding:10px 12px;
+  background:linear-gradient(180deg, var(--accent), var(--accent2));
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.40);
+  white-space:nowrap;
+  max-width:126px;
+  line-height:1.15;
+}
+.header-manager-btn:active{transform:translateY(-50%) scale(.98);}
 
 .brand-title{
   font-size:27px;
@@ -223,7 +242,6 @@ body{
 .burger span:nth-child(3){bottom:0;}
 .act-ico{font-size:14px;line-height:1;color:#fff;}
 
-/* top rows */
 .langs{
   display:flex;
   gap:10px;
@@ -288,7 +306,8 @@ body{
   display:flex;
   align-items:center;
   gap:12px;
-  margin-bottom:12px;
+  margin-bottom:2px;
+  cursor:pointer;
 }
 .category-head img{
   width:68px;
@@ -310,44 +329,176 @@ body{
   color:rgba(229,231,235,.78);
   line-height:1.25;
 }
-.items-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+.category-open-hint{
+  margin-top:10px;
+  font-size:12px;
+  font-weight:800;
+  color:rgba(229,231,235,.75);
 }
-.product-item{
+
+/* popular */
+.popular-wrap{width:100%;padding:4px 12px 6px;}
+.popular-title{width:100%;font-weight:900;padding:8px 2px 10px;display:flex;align-items:center;gap:8px;color:#E5E7EB;}
+.popular-row{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;}
+.pop-card{
+  min-width:190px;border-radius:24px;padding:12px;
+  background: rgba(30,41,59,.60);
+  border:1px solid var(--stroke2);
+  box-shadow: 0 12px 26px rgba(0,0,0,.55);
+  color:#E5E7EB;
+  cursor:pointer;
+}
+.pop-img{
+  height:126px;border-radius:20px;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background: transparent;margin-bottom:8px;
+}
+.pop-img img{
+  width:100%;height:100%;object-fit:cover;border-radius:20px;
+}
+.pop-name{
+  font-weight:900;line-height:1.15;
+}
+.pop-sub{
+  margin-top:4px;
+  font-size:12px;
+  font-weight:800;
+  opacity:.75;
+}
+
+/* cart summary */
+.cart-wrap{
+  padding:10px 12px 0;
+}
+.cart-card{
+  width:94%;
+  margin:0 auto;
   border:1px solid rgba(255,255,255,.10);
-  background:rgba(255,255,255,.05);
-  border-radius:18px;
-  padding:12px;
+  border-radius:22px;
+  background:rgba(255,255,255,.06);
+  padding:14px;
+  box-shadow: 0 12px 26px rgba(0,0,0,.55);
 }
-.product-top{
+.cart-head{
   display:flex;
+  align-items:center;
   justify-content:space-between;
   gap:10px;
-  align-items:flex-start;
+  margin-bottom:10px;
 }
-.product-name{
-  font-weight:900;
-  line-height:1.2;
-  flex:1 1 auto;
-}
-.product-price{
+.cart-title{
   font-weight:900;
   color:#fff;
-  white-space:nowrap;
 }
-.product-bottom{
+.cart-total{
+  font-weight:900;
+  color:#fff;
+}
+.cart-stats{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.cart-pill{
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(17,24,39,.55);
+  font-weight:900;
+  color:#E5E7EB;
+}
+.cart-empty{
+  font-size:12px;
+  font-weight:800;
+  opacity:.75;
+  color:#E5E7EB;
+  margin-top:10px;
+}
+
+/* popup */
+.popup{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;z-index:3000;}
+.popup.show{opacity:1;pointer-events:auto;}
+.popup-box{
+  background: rgba(15,23,42,.96);
+  padding:26px;border-radius:24px;text-align:center;font-weight:800;border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 14px 26px rgba(0,0,0,.60);
+  color:#fff;
+}
+
+/* bottom product sheet */
+.sheet-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.18s;z-index:2200;
+}
+.sheet-backdrop.show{opacity:1;pointer-events:auto;}
+.product-sheet{
+  position:fixed;left:0;right:0;bottom:-100%;
+  background:#0B0F14;
+  color:#fff;
+  border-top-left-radius:24px;border-top-right-radius:24px;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 18px 40px rgba(0,0,0,.70);
+  transition:.22s;
+  z-index:2210;
+  padding:10px 12px 18px;
+  max-height:88vh;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.product-sheet.show{bottom:0;}
+.sheet-handle{width:44px;height:5px;border-radius:999px;background:rgba(255,255,255,.18);margin:6px auto 10px;}
+.sheet-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 4px 12px;
+}
+.sheet-title{
+  font-size:18px;
+  font-weight:900;
+  color:#fff;
+}
+.sheet-close{
+  width:38px;height:38px;border:none;border-radius:12px;background:transparent;cursor:pointer;font-size:22px;line-height:1;color:rgba(229,231,235,.72);
+}
+.sheet-sub{
+  font-size:13px;
+  font-weight:800;
+  color:rgba(229,231,235,.72);
+  margin:-6px 4px 12px;
+  line-height:1.35;
+}
+.sheet-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.sheet-item{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.05);
+  border-radius:20px;
+  overflow:hidden;
+}
+.sheet-item-img{
+  width:100%;
+  height:128px;
+  object-fit:cover;
+  display:block;
+}
+.sheet-item-body{
+  padding:12px;
+}
+.sheet-item-name{
+  font-weight:900;
+  line-height:1.2;
+  min-height:48px;
+}
+.sheet-item-price{
+  margin-top:6px;
+  font-weight:900;
+  color:#fff;
+}
+.sheet-item-actions{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:12px;
+  gap:10px;
   margin-top:10px;
-}
-.product-meta{
-  font-size:12px;
-  font-weight:800;
-  color:rgba(229,231,235,.72);
 }
 .qty-box{
   display:flex;
@@ -374,110 +525,6 @@ body{
   font-size:16px;
   color:#fff;
 }
-
-/* popular */
-.popular-wrap{width:100%;padding:4px 12px 6px;}
-.popular-title{width:100%;font-weight:900;padding:8px 2px 10px;display:flex;align-items:center;gap:8px;color:#E5E7EB;}
-.popular-row{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;}
-.pop-card{
-  min-width:190px;border-radius:24px;padding:12px;
-  background: rgba(30,41,59,.60);
-  border:1px solid var(--stroke2);
-  box-shadow: 0 12px 26px rgba(0,0,0,.55);
-  color:#E5E7EB;
-}
-.pop-img{
-  height:112px;border-radius:20px;overflow:hidden;display:flex;align-items:center;justify-content:center;
-  background: transparent;margin-bottom:8px;
-}
-.pop-img img{
-  width:100%;height:100%;object-fit:cover;border-radius:20px;
-}
-.pop-name{
-  font-weight:900;line-height:1.15;
-}
-.pop-sub{
-  margin-top:4px;
-  font-size:12px;
-  font-weight:800;
-  opacity:.75;
-}
-
-/* popup */
-.popup{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;z-index:3000;}
-.popup.show{opacity:1;pointer-events:auto;}
-.popup-box{
-  background: rgba(15,23,42,.96);
-  padding:26px;border-radius:24px;text-align:center;font-weight:800;border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 14px 26px rgba(0,0,0,.60);
-  color:#fff;
-}
-
-/* image modal */
-.img-modal{
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.72);
-  display:flex; align-items:center; justify-content:center;
-  opacity:0; pointer-events:none;
-  transition:.18s;
-  z-index:2000;
-  padding:18px;
-}
-.img-modal.show{opacity:1;pointer-events:auto;}
-.img-modal-box{
-  width:min(560px, 100%);
-  border-radius:22px;
-  overflow:hidden;
-  background: rgba(15,23,42,.96);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 18px 44px rgba(0,0,0,.60);
-}
-.img-modal-top{
-  display:flex; align-items:center; justify-content:space-between;
-  gap:10px;
-  padding:12px 12px;
-  background:rgba(255,255,255,.06);
-}
-.img-modal-title{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;}
-.img-modal-close{
-  width:38px;height:38px;border:none;border-radius:14px;background:transparent;cursor:pointer;
-  font-size:22px;line-height:1;color:rgba(229,231,235,.72);
-}
-.img-modal-body{
-  display:flex;
-  gap:12px;
-  padding:12px;
-}
-.img-modal-left{
-  flex: 0 0 46%;
-  border-radius:18px;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.img-modal-img{
-  width:100%;
-  max-height:70vh;
-  object-fit:contain;
-  display:block;
-}
-.img-modal-right{
-  flex: 1 1 auto;
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  min-width:0;
-}
-.spec-row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;font-weight:900;}
-.spec-k{color: rgba(229,231,235,.72);font-weight:900;flex:0 0 auto;}
-.spec-v{color:#fff;text-align:right;word-break:break-word;flex: 1 1 auto;}
 
 /* menu */
 .menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.18s;z-index:1000;}
@@ -545,36 +592,43 @@ body{
 .consult-send:active{transform:scale(.98);}
 
 @media (max-width:520px){
-  .img-modal-body{flex-direction:column;}
-  .img-modal-left{flex:0 0 auto;}
+  .sheet-grid{grid-template-columns:1fr;}
   .consult-card{width:94%;}
 }
 @media (max-width:420px){
   .header{
     padding:10px 10px 12px;
-    min-height:100px;
+    min-height:112px;
   }
   .header img{
-    width:66px;
-    height:66px;
+    width:60px;
+    height:60px;
     right:46px;
+  }
+  .header-manager-btn{
+    right:114px;
+    max-width:104px;
+    font-size:11px;
+    padding:8px 10px;
   }
   .brand-title{font-size:24px;}
   .brand-slogan{font-size:12.5px;}
-  .header-left{padding-right:94px;}
+  .header-left{padding-right:160px;}
   .input{width:92%;}
-  .products{gap:14px;}
-  .product-top{flex-direction:column;}
-  .product-bottom{flex-direction:column;align-items:flex-start;}
 }
 @media (max-width:360px){
-  .header img{width:60px;height:60px;right:44px;}
+  .header img{width:54px;height:54px;right:44px;}
   .brand-title{font-size:22px;}
   .brand-slogan{font-size:11.5px;}
   .brand-phone a{font-size:13px;}
   .btn{min-width:108px;padding:12px 16px;}
   .langs .btn{min-width:86px;padding:10px 10px;font-size:13px;}
-  .header-left{padding-right:88px;}
+  .header-left{padding-right:152px;}
+  .header-manager-btn{
+    right:106px;
+    max-width:96px;
+    font-size:10.5px;
+  }
 }
 </style>
 </head>
@@ -596,6 +650,10 @@ body{
       <a href="tel:+998787771771" onclick="callPhone(event)">+998 (78) 777-17-71</a>
     </div>
   </div>
+
+  <button class="header-manager-btn" type="button" onclick="scrollToConsult()">
+    <span id="headerManagerText">Связаться с менеджером</span>
+  </button>
 
   <img src="images/logo.png" onerror="this.src='logo.png'" alt="Montella logo">
 
@@ -731,6 +789,20 @@ body{
 
 <div class="products" id="products"></div>
 
+<div class="cart-wrap" id="cartWrap">
+  <div class="cart-card">
+    <div class="cart-head">
+      <div class="cart-title" id="cartTitle">🛒 Корзина</div>
+      <div class="cart-total" id="cartTotal">0 сум</div>
+    </div>
+    <div class="cart-stats">
+      <div class="cart-pill" id="cartCountPill">Товаров: 0</div>
+      <div class="cart-pill" id="cartSumPill">Сумма: 0 сум</div>
+    </div>
+    <div class="cart-empty" id="cartEmpty">Выберите товары кнопками + и −</div>
+  </div>
+</div>
+
 <div class="consult-wrap" id="consultWrap">
   <div class="consult-card">
     <div class="consult-head" id="consultTitle">💬 Связаться с менеджером</div>
@@ -759,27 +831,18 @@ body{
   </div>
 </div>
 
-<div class="popup" id="popup"><div class="popup-box" id="popupText">✅</div></div>
-
-<div class="img-modal" id="imgModal" onclick="closeImgModal(event)">
-  <div class="img-modal-box" onclick="event.stopPropagation()">
-    <div class="img-modal-top">
-      <div class="img-modal-title" id="imgModalTitle">Категория</div>
-      <button class="img-modal-close" onclick="closeImgModal(event)">×</button>
-    </div>
-
-    <div class="img-modal-body">
-      <div class="img-modal-left">
-        <img class="img-modal-img" id="imgModalImg" src="" alt="">
-      </div>
-
-      <div class="img-modal-right" id="specBox">
-        <div class="spec-row"><div class="spec-k" id="kModel">Категория</div><div class="spec-v" id="specModel">—</div></div>
-        <div class="spec-row"><div class="spec-k" id="kRegion">Описание</div><div class="spec-v" id="specRegion">—</div></div>
-      </div>
-    </div>
+<div class="sheet-backdrop" id="productSheetBackdrop" onclick="closeCategorySheet()"></div>
+<div class="product-sheet" id="productSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div class="sheet-title" id="sheetTitle">Категория</div>
+    <button class="sheet-close" onclick="closeCategorySheet()">×</button>
   </div>
+  <div class="sheet-sub" id="sheetSub">Описание</div>
+  <div class="sheet-grid" id="sheetGrid"></div>
 </div>
+
+<div class="popup" id="popup"><div class="popup-box" id="popupText">✅</div></div>
 
 </div>
 
@@ -838,6 +901,10 @@ function openFacebook(e){
   closeTopMenu();
   openLink(FACEBOOK_URL);
 }
+function scrollToConsult(){
+  const el = document.getElementById('consultWrap');
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
 
 const tgUser = Telegram.WebApp.initDataUnsafe?.user || {};
 const tg_username = tgUser.username || "";
@@ -870,9 +937,12 @@ const UI = {
     consultNeedPhone:'Введите номер телефона',
     consultHint:'Сначала укажите номер телефона, затем отправьте запрос менеджеру.',
     nothingFound:'Ничего не найдено',
-    kModel:'Категория',
-    kRegion:'Описание',
-    qtyAdded:'Количество изменено',
+    categoryHint:'Нажмите, чтобы открыть товары',
+    cart:'🛒 Корзина',
+    cartCount:'Товаров',
+    cartSum:'Сумма',
+    cartEmpty:'Выберите товары кнопками + и −',
+    managerHeader:'Связаться с менеджером',
     fromPrice:'от'
   },
   uz:{
@@ -900,9 +970,12 @@ const UI = {
     consultNeedPhone:'Telefon raqamini kiriting',
     consultHint:'Avval telefon raqamingizni kiriting, keyin so‘rov yuboring.',
     nothingFound:'Hech narsa topilmadi',
-    kModel:'Kategoriya',
-    kRegion:'Tavsif',
-    qtyAdded:'Soni o‘zgardi',
+    categoryHint:'Tovarlarni ochish uchun bosing',
+    cart:'🛒 Savat',
+    cartCount:'Tovarlar',
+    cartSum:'Jami',
+    cartEmpty:'Tovarlarni + va − tugmalari bilan tanlang',
+    managerHeader:'Menejer bilan aloqa',
     fromPrice:'dan'
   },
   en:{
@@ -930,9 +1003,12 @@ const UI = {
     consultNeedPhone:'Enter phone number',
     consultHint:'Enter your phone number first, then send the request.',
     nothingFound:'Nothing found',
-    kModel:'Category',
-    kRegion:'Description',
-    qtyAdded:'Quantity updated',
+    categoryHint:'Tap to open products',
+    cart:'🛒 Cart',
+    cartCount:'Items',
+    cartSum:'Total',
+    cartEmpty:'Choose products with + and − buttons',
+    managerHeader:'Contact manager',
     fromPrice:'from'
   },
   tj:{
@@ -960,9 +1036,12 @@ const UI = {
     consultNeedPhone:'Рақами телефонро ворид кунед',
     consultHint:'Аввал рақами телефонро ворид кунед, баъд дархостро фиристед.',
     nothingFound:'Ягон чиз ёфт нашуд',
-    kModel:'Категория',
-    kRegion:'Тавсиф',
-    qtyAdded:'Миқдор иваз шуд',
+    categoryHint:'Барои кушодани молҳо пахш кунед',
+    cart:'🛒 Сабад',
+    cartCount:'Молҳо',
+    cartSum:'Ҷамъ',
+    cartEmpty:'Молҳоро бо тугмаҳои + ва − интихоб кунед',
+    managerHeader:'Тамос бо менеҷер',
     fromPrice:'аз'
   }
 };
@@ -976,12 +1055,12 @@ const SERVICES = [
     n: mkName('Минеральная вода','Mineral suv','Mineral water','Оби минералӣ'),
     desc: mkName('Освежающая минеральная вода на каждый день','Har kun uchun tetiklashtiruvchi mineral suv','Refreshing mineral water for every day','Оби минералии тароватбахш барои ҳар рӯз'),
     items:[
-      {id:'water1', n:mkName('Montella 0.5L','Montella 0.5L','Montella 0.5L','Montella 0.5L'), price:3000},
-      {id:'water2', n:mkName('Montella 0.7L','Montella 0.7L','Montella 0.7L','Montella 0.7L'), price:5000},
-      {id:'water3', n:mkName('Montella 1L','Montella 1L','Montella 1L','Montella 1L'), price:7000},
-      {id:'water4', n:mkName('Montella Sweet — лимон и мята 0.5L','Montella Sweet — limon va yalpiz 0.5L','Montella Sweet — lemon and mint 0.5L','Montella Sweet — лимӯ ва наъно 0.5L'), price:3000},
-      {id:'water5', n:mkName('Montella Sweet — лимон и мята 0.7L','Montella Sweet — limon va yalpiz 0.7L','Montella Sweet — lemon and mint 0.7L','Montella Sweet — лимӯ ва наъно 0.7L'), price:5000},
-      {id:'water6', n:mkName('Montella Sweet — лимон и мята 1L','Montella Sweet — limon va yalpiz 1L','Montella Sweet — lemon and mint 1L','Montella Sweet — лимӯ ва наъно 1L'), price:7000}
+      {id:'water1', img:'images/services_water.jpg', n:mkName('Montella 0.5L','Montella 0.5L','Montella 0.5L','Montella 0.5L'), price:3000},
+      {id:'water2', img:'images/services_water.jpg', n:mkName('Montella 0.7L','Montella 0.7L','Montella 0.7L','Montella 0.7L'), price:5000},
+      {id:'water3', img:'images/services_water.jpg', n:mkName('Montella 1L','Montella 1L','Montella 1L','Montella 1L'), price:7000},
+      {id:'water4', img:'images/services_water.jpg', n:mkName('Montella Sweet — лимон и мята 0.5L','Montella Sweet — limon va yalpiz 0.5L','Montella Sweet — lemon and mint 0.5L','Montella Sweet — лимӯ ва наъно 0.5L'), price:3000},
+      {id:'water5', img:'images/services_water.jpg', n:mkName('Montella Sweet — лимон и мята 0.7L','Montella Sweet — limon va yalpiz 0.7L','Montella Sweet — lemon and mint 0.7L','Montella Sweet — лимӯ ва наъно 0.7L'), price:5000},
+      {id:'water6', img:'images/services_water.jpg', n:mkName('Montella Sweet — лимон и мята 1L','Montella Sweet — limon va yalpiz 1L','Montella Sweet — lemon and mint 1L','Montella Sweet — лимӯ ва наъно 1L'), price:7000}
     ]
   },
   {
@@ -990,11 +1069,11 @@ const SERVICES = [
     n: mkName('Энергетические напитки','Energetik ichimliklar','Energy drinks','Нӯшокиҳои энергетикӣ'),
     desc: mkName('Энергетические напитки для бодрости и активности','Tetiklik va faollik uchun energetik ichimliklar','Energy drinks for power and activity','Нӯшокиҳои энергетикӣ барои нерӯ ва фаъолият'),
     items:[
-      {id:'energy1', n:mkName('Энергетический напиток 18+ 0.25L','Energetik ichimlik 18+ 0.25L','Energy drink 18+ 0.25L','Нӯшокии энергетикӣ 18+ 0.25L'), price:7500},
-      {id:'energy2', n:mkName('Энергетический напиток 18+ 0.33L','Energetik ichimlik 18+ 0.33L','Energy drink 18+ 0.33L','Нӯшокии энергетикӣ 18+ 0.33L'), price:8330},
-      {id:'energy3', n:mkName('Энергетический напиток 18+ 0.45L','Energetik ichimlik 18+ 0.45L','Energy drink 18+ 0.45L','Нӯшокии энергетикӣ 18+ 0.45L'), price:10000},
-      {id:'energy4', n:mkName('Энергетический напиток 18+ 0.45L Карамель','Energetik ichimlik 18+ 0.45L Karamel','Energy drink 18+ 0.45L Caramel','Нӯшокии энергетикӣ 18+ 0.45L Карамел'), price:10000},
-      {id:'energy5', n:mkName('Энергетический напиток 18+ 0.45L Кактус','Energetik ichimlik 18+ 0.45L Kaktus','Energy drink 18+ 0.45L Cactus','Нӯшокии энергетикӣ 18+ 0.45L Кактус'), price:10000}
+      {id:'energy1', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.25L','Energetik ichimlik 18+ 0.25L','Energy drink 18+ 0.25L','Нӯшокии энергетикӣ 18+ 0.25L'), price:7500},
+      {id:'energy2', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.33L','Energetik ichimlik 18+ 0.33L','Energy drink 18+ 0.33L','Нӯшокии энергетикӣ 18+ 0.33L'), price:8330},
+      {id:'energy3', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.45L','Energetik ichimlik 18+ 0.45L','Energy drink 18+ 0.45L','Нӯшокии энергетикӣ 18+ 0.45L'), price:10000},
+      {id:'energy4', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.45L Карамель','Energetik ichimlik 18+ 0.45L Karamel','Energy drink 18+ 0.45L Caramel','Нӯшокии энергетикӣ 18+ 0.45L Карамел'), price:10000},
+      {id:'energy5', img:'images/services_energy.jpg', n:mkName('Энергетический напиток 18+ 0.45L Кактус','Energetik ichimlik 18+ 0.45L Kaktus','Energy drink 18+ 0.45L Cactus','Нӯшокии энергетикӣ 18+ 0.45L Кактус'), price:10000}
     ]
   },
   {
@@ -1003,14 +1082,14 @@ const SERVICES = [
     n: mkName('Чай','Choy','Tea','Чой'),
     desc: mkName('Классический и ароматный чай','An’anaviy va xushbo‘y choy','Classic and aromatic tea','Чои классикӣ ва хушбӯй'),
     items:[
-      {id:'tea1', n:mkName('Чай Айс — лесные ягоды 0.5L','Ays choy — o‘rmon mevalari 0.5L','Ice tea — forest berries 0.5L','Чой Айс — буттамеваи ҷангал 0.5L'), price:4170},
-      {id:'tea2', n:mkName('Чай Айс — лесные ягоды 1L','Ays choy — o‘rmon mevalari 1L','Ice tea — forest berries 1L','Чой Айс — буттамеваи ҷангал 1L'), price:10000},
-      {id:'tea3', n:mkName('Чай Айс — персик (зеленый) 0.5L','Ays choy — shaftoli (yashil) 0.5L','Ice tea — peach (green) 0.5L','Чой Айс — шафтолу (сабз) 0.5L'), price:4170},
-      {id:'tea4', n:mkName('Чай Айс — персик (зеленый) 1L','Ays choy — shaftoli (yashil) 1L','Ice tea — peach (green) 1L','Чой Айс — шафтолу (сабз) 1L'), price:10000},
-      {id:'tea5', n:mkName('Чай Айс — персик (черный) 0.5L','Ays choy — shaftoli (qora) 0.5L','Ice tea — peach (black) 0.5L','Чой Айс — шафтолу (сиёҳ) 0.5L'), price:4170},
-      {id:'tea6', n:mkName('Чай Айс — персик (черный) 1L','Ays choy — shaftoli (qora) 1L','Ice tea — peach (black) 1L','Чой Айс — шафтолу (сиёҳ) 1L'), price:10000},
-      {id:'tea7', n:mkName('Чай Айс — манго и ромашка 0.5L','Ays choy — mango va romashka 0.5L','Ice tea — mango and chamomile 0.5L','Чой Айс — манго ва бобуна 0.5L'), price:4170},
-      {id:'tea8', n:mkName('Чай Айс — манго и ромашка 1L','Ays choy — mango va romashka 1L','Ice tea — mango and chamomile 1L','Чой Айс — манго ва бобуна 1L'), price:10000}
+      {id:'tea1', img:'images/services_tea.jpg', n:mkName('Чай Айс — лесные ягоды 0.5L','Ays choy — o‘rmon mevalari 0.5L','Ice tea — forest berries 0.5L','Чой Айс — буттамеваи ҷангал 0.5L'), price:4170},
+      {id:'tea2', img:'images/services_tea.jpg', n:mkName('Чай Айс — лесные ягоды 1L','Ays choy — o‘rmon mevalari 1L','Ice tea — forest berries 1L','Чой Айс — буттамеваи ҷангал 1L'), price:10000},
+      {id:'tea3', img:'images/services_tea.jpg', n:mkName('Чай Айс — персик (зеленый) 0.5L','Ays choy — shaftoli (yashil) 0.5L','Ice tea — peach (green) 0.5L','Чой Айс — шафтолу (сабз) 0.5L'), price:4170},
+      {id:'tea4', img:'images/services_tea.jpg', n:mkName('Чай Айс — персик (зеленый) 1L','Ays choy — shaftoli (yashil) 1L','Ice tea — peach (green) 1L','Чой Айс — шафтолу (сабз) 1L'), price:10000},
+      {id:'tea5', img:'images/services_tea.jpg', n:mkName('Чай Айс — персик (черный) 0.5L','Ays choy — shaftoli (qora) 0.5L','Ice tea — peach (black) 0.5L','Чой Айс — шафтолу (сиёҳ) 0.5L'), price:4170},
+      {id:'tea6', img:'images/services_tea.jpg', n:mkName('Чай Айс — персик (черный) 1L','Ays choy — shaftoli (qora) 1L','Ice tea — peach (black) 1L','Чой Айс — шафтолу (сиёҳ) 1L'), price:10000},
+      {id:'tea7', img:'images/services_tea.jpg', n:mkName('Чай Айс — манго и ромашка 0.5L','Ays choy — mango va romashka 0.5L','Ice tea — mango and chamomile 0.5L','Чой Айс — манго ва бобуна 0.5L'), price:4170},
+      {id:'tea8', img:'images/services_tea.jpg', n:mkName('Чай Айс — манго и ромашка 1L','Ays choy — mango va romashka 1L','Ice tea — mango and chamomile 1L','Чой Айс — манго ва бобуна 1L'), price:10000}
     ]
   },
   {
@@ -1019,22 +1098,22 @@ const SERVICES = [
     n: mkName('Сок','Sharbat','Juice','Шарбат'),
     desc: mkName('Натуральные соки с ярким вкусом','Yorqin ta’mli tabiiy sharbatlar','Natural juices with rich taste','Шарбатҳои табиӣ бо таъми бой'),
     items:[
-      {id:'juice1', n:mkName('Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L'), price:5833},
-      {id:'juice2', n:mkName('Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L'), price:5833},
-      {id:'juice3', n:mkName('Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L'), price:5833},
-      {id:'juice4', n:mkName('Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L'), price:5833},
-      {id:'juice5', n:mkName('Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L'), price:5833}
+      {id:'juice1', img:'images/services_juice.jpg', n:mkName('Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L'), price:5833},
+      {id:'juice2', img:'images/services_juice.jpg', n:mkName('Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L'), price:5833},
+      {id:'juice3', img:'images/services_juice.jpg', n:mkName('Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L'), price:5833},
+      {id:'juice4', img:'images/services_juice.jpg', n:mkName('Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L'), price:5833},
+      {id:'juice5', img:'images/services_juice.jpg', n:mkName('Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L'), price:5833}
     ]
   }
 ];
 
 const ITEM_INDEX = {};
 SERVICES.forEach(it => ITEM_INDEX[it.id]=it);
-
 const POPULAR = ['water','energy','tea','juice'].filter(id=>ITEM_INDEX[id]);
 
 const CART = {};
 let lang='ru';
+let currentSheetCategory = null;
 
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function nameOfCategory(id){
@@ -1082,40 +1161,48 @@ function qtyOf(id){ return CART[id] || 0; }
 function setQty(id, val){
   CART[id] = Math.max(0, val);
   if(CART[id] === 0) delete CART[id];
-  document.querySelectorAll(`[data-qty="${id}"]`).forEach(el => el.textContent = qtyOf(id));
+  syncQtyViews(id);
+  updateCartSummary();
 }
 function changeQty(id, delta){
   setQty(id, qtyOf(id) + delta);
 }
+function syncQtyViews(id){
+  document.querySelectorAll(`[data-qty="${id}"]`).forEach(el => el.textContent = qtyOf(id));
+}
+function getCartStats(){
+  let count = 0;
+  let sum = 0;
+  SERVICES.forEach(cat=>{
+    cat.items.forEach(item=>{
+      const q = qtyOf(item.id);
+      if(q > 0){
+        count += q;
+        sum += q * item.price;
+      }
+    });
+  });
+  return {count, sum};
+}
+function updateCartSummary(){
+  const stats = getCartStats();
+  document.getElementById('cartTotal').textContent = formatPrice(stats.sum);
+  document.getElementById('cartCountPill').textContent = `${UI[lang].cartCount}: ${stats.count}`;
+  document.getElementById('cartSumPill').textContent = `${UI[lang].cartSum}: ${formatPrice(stats.sum)}`;
+  document.getElementById('cartEmpty').textContent = stats.count ? `${UI[lang].cartCount}: ${stats.count}` : UI[lang].cartEmpty;
+}
 
-function categoryHTML(cat, filteredItems){
+function categoryHTML(cat, hasMatch){
+  if(!hasMatch) return '';
   return `
     <div class="category-card">
-      <div class="category-head" onclick="openImage(event,'${cat.id}')" style="cursor:pointer;">
+      <div class="category-head" onclick="openCategorySheet('${cat.id}')">
         <img src="${cat.img}" onerror="this.onerror=null;this.src='images/logo.png'">
         <div>
           <div class="category-title">${escapeHtml(nameOfCategory(cat.id))}</div>
           <div class="category-desc">${escapeHtml(descOfCategory(cat.id))}</div>
+          <div class="category-open-hint">${escapeHtml(UI[lang].categoryHint)}</div>
         </div>
-      </div>
-
-      <div class="items-list">
-        ${filteredItems.map(item => `
-          <div class="product-item">
-            <div class="product-top">
-              <div class="product-name">${escapeHtml(itemName(item))}</div>
-              <div class="product-price">${formatPrice(item.price)}</div>
-            </div>
-            <div class="product-bottom">
-              <div class="product-meta">${escapeHtml(nameOfCategory(cat.id))}</div>
-              <div class="qty-box">
-                <button class="qty-btn" type="button" onclick="changeQty('${item.id}', -1)">−</button>
-                <div class="qty-val" data-qty="${item.id}">${qtyOf(item.id)}</div>
-                <button class="qty-btn" type="button" onclick="changeQty('${item.id}', 1)">+</button>
-              </div>
-            </div>
-          </div>
-        `).join('')}
       </div>
     </div>
   `;
@@ -1127,8 +1214,9 @@ function renderProducts(filterText=''){
 
   const q = (filterText || '').trim().toLowerCase();
 
-  const visibleCategories = SERVICES.map(cat => {
-    const items = !q ? cat.items : cat.items.filter(item => {
+  const visibleCategories = SERVICES.filter(cat=>{
+    if(!q) return true;
+    return cat.items.some(item=>{
       const text = [
         itemName(item),
         nameOfCategory(cat.id),
@@ -1136,8 +1224,7 @@ function renderProducts(filterText=''){
       ].join(' ').toLowerCase();
       return text.includes(q);
     });
-    return {cat, items};
-  }).filter(x => x.items.length > 0);
+  });
 
   if(!visibleCategories.length){
     box.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:18px;font-weight:900;opacity:.9;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:18px;color:#E5E7EB;">
@@ -1146,8 +1233,8 @@ function renderProducts(filterText=''){
     return;
   }
 
-  visibleCategories.forEach(x => {
-    box.innerHTML += categoryHTML(x.cat, x.items);
+  visibleCategories.forEach(cat => {
+    box.innerHTML += categoryHTML(cat, true);
   });
 }
 
@@ -1159,7 +1246,7 @@ function searchProducts(){
 function popCardHTML(it){
   const minPrice = Math.min(...it.items.map(x => x.price));
   return `
-  <div class="pop-card" onclick="openImage(event,'${it.id}')">
+  <div class="pop-card" onclick="openCategorySheet('${it.id}')">
     <div class="pop-img"><img src="${it.img}" onerror="this.onerror=null;this.src='images/logo.png'"></div>
     <div class="pop-name">${escapeHtml(nameOfCategory(it.id))}</div>
     <div class="pop-sub">${UI[lang].fromPrice} ${formatPrice(minPrice)}</div>
@@ -1174,24 +1261,38 @@ function renderPopular(){
   });
 }
 
-function openImage(e,id){
-  try{e.preventDefault();e.stopPropagation();}catch(_){}
-  const it = ITEM_INDEX[id];
+function openCategorySheet(catId){
+  const cat = ITEM_INDEX[catId];
+  if(!cat) return;
+  currentSheetCategory = catId;
 
-  document.getElementById('imgModalTitle').innerText = nameOfCategory(id);
-  const img=document.getElementById('imgModalImg');
-  img.src = it?.img || 'images/logo.png';
-  img.onerror=function(){this.onerror=null;this.src='images/logo.png';};
+  document.getElementById('sheetTitle').textContent = nameOfCategory(catId);
+  document.getElementById('sheetSub').textContent = descOfCategory(catId);
 
-  document.getElementById('specModel').innerText  = nameOfCategory(id) || '—';
-  document.getElementById('specRegion').innerText = descOfCategory(id);
+  const grid = document.getElementById('sheetGrid');
+  grid.innerHTML = cat.items.map(item => `
+    <div class="sheet-item">
+      <img class="sheet-item-img" src="${item.img || cat.img}" onerror="this.onerror=null;this.src='images/logo.png'" alt="">
+      <div class="sheet-item-body">
+        <div class="sheet-item-name">${escapeHtml(itemName(item))}</div>
+        <div class="sheet-item-price">${formatPrice(item.price)}</div>
+        <div class="sheet-item-actions">
+          <div class="qty-box">
+            <button class="qty-btn" type="button" onclick="event.stopPropagation();changeQty('${item.id}', -1)">−</button>
+            <div class="qty-val" data-qty="${item.id}">${qtyOf(item.id)}</div>
+            <button class="qty-btn" type="button" onclick="event.stopPropagation();changeQty('${item.id}', 1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
 
-  document.getElementById('imgModal').classList.add('show');
+  document.getElementById('productSheetBackdrop').classList.add('show');
+  document.getElementById('productSheet').classList.add('show');
 }
-function closeImgModal(e){
-  try{e.preventDefault();e.stopPropagation();}catch(_){}
-  document.getElementById('imgModal').classList.remove('show');
-  document.getElementById('imgModalImg').src='';
+function closeCategorySheet(){
+  document.getElementById('productSheetBackdrop').classList.remove('show');
+  document.getElementById('productSheet').classList.remove('show');
 }
 
 let toastTimer=null;
@@ -1242,10 +1343,30 @@ function getNormalizedPhone(){
   return '';
 }
 
+function buildCartPayload(){
+  const items = [];
+  SERVICES.forEach(cat=>{
+    cat.items.forEach(item=>{
+      const qty = qtyOf(item.id);
+      if(qty > 0){
+        items.push({
+          category: nameOfCategory(cat.id),
+          name: itemName(item),
+          qty,
+          price: item.price,
+          total: item.price * qty
+        });
+      }
+    });
+  });
+  return items;
+}
+
 function sendConsultMain(e){
   try{e.preventDefault();e.stopPropagation();}catch(_){}
   const text = (document.getElementById('consultInput')?.value || '').trim();
   const phone = getNormalizedPhone();
+  const cartItems = buildCartPayload();
 
   if(!phone){
     requestPhoneFirst();
@@ -1265,7 +1386,8 @@ function sendConsultMain(e){
     tg:{id:tg_id,username:tg_username,first_name:tg_first_name},
     phone:'+' + phone,
     text,
-    cart:CART,
+    cart:cartItems,
+    cart_stats:getCartStats(),
     time: new Date().toISOString()
   };
 
@@ -1331,9 +1453,9 @@ function applyUI(){
   document.getElementById('consultHint').innerText = UI[lang].consultHint;
 
   document.getElementById('brandSlogan').innerText = UI[lang].slogan;
+  document.getElementById('headerManagerText').innerText = UI[lang].managerHeader;
 
-  document.getElementById('kModel').innerText  = UI[lang].kModel;
-  document.getElementById('kRegion').innerText = UI[lang].kRegion;
+  document.getElementById('cartTitle').innerText = UI[lang].cart;
 
   const st=document.getElementById('searchTitle');
   st.innerText = UI[lang].searchResults;
@@ -1342,6 +1464,11 @@ function applyUI(){
   renderWelcome();
   renderPopular();
   if(isSearchOpen()) searchProducts(); else renderProducts();
+  updateCartSummary();
+
+  if(currentSheetCategory){
+    openCategorySheet(currentSheetCategory);
+  }
 }
 
 function setLang(l,btn){
@@ -1363,6 +1490,7 @@ document.getElementById('langRU')?.classList.add('active');
 applyUI();
 renderProducts();
 renderPopular();
+updateCartSummary();
 </script>
 </body>
 </html>
