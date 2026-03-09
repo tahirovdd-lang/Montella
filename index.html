@@ -91,6 +91,30 @@ body{
 }
 .page{max-width:560px;margin:0 auto;}
 
+/* splash */
+.splash-screen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:1;
+  transition:opacity .45s ease, visibility .45s ease;
+}
+.splash-screen.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.splash-screen img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
 /* header */
 .header{
   padding:16px 12px 26px;
@@ -103,19 +127,32 @@ body{
 }
 .header img{
   position:absolute;left:12px;
-  width:84px;height:108px;
-  object-fit:contain;
-  border-radius:18px;
+  width:88px;height:88px;
+  object-fit:cover;
+  border-radius:50%;
   background:rgba(255,255,255,.08);
   padding:4px;
-  border:1px solid rgba(255,255,255,.14);
+  border:2px solid rgba(255,255,255,.18);
   box-shadow:0 14px 30px rgba(0,0,0,.55);
 }
 
-.brand-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;transform: translateX(16px);}
+.brand-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  transform: translateX(10px);
+}
 .brand-title{
   font-size:30px;line-height:1;letter-spacing:.6px;font-weight:900;
   color:var(--header-text);
+}
+.brand-slogan{
+  font-weight:900;
+  font-size:14px;
+  letter-spacing:.4px;
+  line-height:1.15;
+  color:rgba(255,255,255,.95);
 }
 .brand-title2{
   font-weight:800;
@@ -402,7 +439,11 @@ body{
 .menu-right{opacity:.65;font-weight:900;color:rgba(229,231,235,.75);}
 
 /* consultation block */
-.consult-wrap{padding:8px 12px 0;}
+.consult-wrap{
+  padding:10px 12px 4px;
+  margin-top:8px;
+  margin-bottom:8px;
+}
 .consult-card{
   width:94%;
   margin:8px auto 0;
@@ -414,18 +455,20 @@ body{
 }
 .consult-head{font-weight:900;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
 .consult-sub{font-weight:800;opacity:.75;color:#E5E7EB;margin-top:-2px;margin-bottom:10px;line-height:1.25;}
-.consult-actions{display:flex;gap:10px;align-items:center;}
-.consult-input{
-  flex:1 1 auto;
+.consult-actions{display:flex;flex-direction:column;gap:10px;align-items:stretch;}
+.consult-input,
+.consult-phone{
+  width:100%;
   padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.10);
   background:rgba(17,24,39,.55);font-weight:900;outline:none;color:#fff;
 }
+.consult-phone{display:none;}
 .consult-send{
   flex:0 0 auto;
   padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.18);
   background: linear-gradient(180deg, var(--accent), var(--accent2));
   color:#fff;font-weight:900;cursor:pointer;box-shadow:0 12px 24px rgba(0,0,0,.55);
-  min-width:148px;
+  width:100%;
 }
 .consult-send:active{transform:scale(.98);}
 
@@ -436,16 +479,17 @@ body{
 }
 @media (max-width:420px){
   .brand-title{font-size:28px;}
+  .brand-slogan{font-size:13px;}
   .brand-title2{font-size:13px;}
-  .brand-wrap{transform: translateX(10px);}
+  .brand-wrap{transform: translateX(8px);}
   .header{padding:14px 10px 24px;}
   .input{width:92%;}
   .products{gap:14px;}
-  .consult-send{min-width:132px;}
 }
 @media (max-width:360px){
-  .header img{width:76px;height:104px;left:10px;}
+  .header img{width:78px;height:78px;left:10px;}
   .brand-title{font-size:26px;}
+  .brand-slogan{font-size:12.5px;}
   .brand-title2{font-size:12px;letter-spacing:1.3px;}
   .brand-phone a{font-size:13px;}
   .btn{min-width:108px;padding:12px 16px;}
@@ -456,8 +500,19 @@ body{
 
 <body>
 
+<!-- ✅ Стартовое фото при открытии приложения:
+     имя файла: splash.jpg
+     положить в папку images/
+     путь: images/splash.jpg
+-->
+
+<div class="splash-screen" id="splashScreen">
+  <img src="images/splash.jpg" onerror="this.onerror=null;this.src='splash.jpg'" alt="Montella splash">
+</div>
+
 <!-- ✅ Файлы изображений:
   logo.png
+  splash.jpg
   services_logo.jpg
   services_identity.jpg
   services_packaging.jpg
@@ -475,22 +530,20 @@ body{
 
   <div class="brand-wrap">
     <div class="brand-title">MONTELLA</div>
+    <div class="brand-slogan" id="brandSlogan">Легкая на каждый день!</div>
     <div class="brand-title2" id="branchTitle">КОМПАНИЯ</div>
     <div class="brand-title3" id="branchTitle2">БРЕНД • СТИЛЬ • РАЗВИТИЕ</div>
 
     <div class="welcome" id="welcomeLine" style="display:none;"></div>
 
     <div class="brand-phone">
-      <a href="tel:+998901234567" onclick="callPhone(event)">+998 (90) 123-45-67</a>
+      <a href="tel:+998787771771" onclick="callPhone(event)">+998 (78) 777-17-71</a>
     </div>
   </div>
 
   <div class="header-actions">
     <div class="act-btn" onclick="openTopMenu()" title="Меню">
       <div class="burger"><span></span><span></span><span></span></div>
-    </div>
-    <div class="act-btn" onclick="openHeaderLocation()" title="Маршрут">
-      <span class="act-ico">📍</span>
     </div>
     <div class="act-btn" onclick="toggleSearch()" title="Поиск">
       <span class="act-ico">🔍</span>
@@ -510,23 +563,12 @@ body{
 
   <div class="menu-list">
 
-    <a class="menu-item" href="#" onclick="openGallery(event)">
-      <div class="menu-left">
-        <div class="menu-ic">🖼</div>
-        <div class="menu-txt">
-          <div class="menu-name" id="mGalleryTitle">Галерея</div>
-          <div class="menu-sub" id="mGallerySub">Наши работы</div>
-        </div>
-      </div>
-      <div class="menu-right">›</div>
-    </a>
-
-    <a class="menu-item" href="tel:+998901234567" onclick="closeTopMenu()">
+    <a class="menu-item" href="tel:+998787771771" onclick="closeTopMenu()">
       <div class="menu-left">
         <div class="menu-ic">📞</div>
         <div class="menu-txt">
           <div class="menu-name" id="mCallTitle">Позвонить</div>
-          <div class="menu-sub" id="mCallSub">+998 (90) 123-45-67</div>
+          <div class="menu-sub" id="mCallSub">+998 (78) 777-17-71</div>
         </div>
       </div>
       <div class="menu-right">›</div>
@@ -536,19 +578,30 @@ body{
       <div class="menu-left">
         <div class="menu-ic">📸</div>
         <div class="menu-txt">
-          <div class="menu-name">@montella</div>
+          <div class="menu-name">@montella.official</div>
           <div class="menu-sub" id="mInstaSub1">Открыть Instagram</div>
         </div>
       </div>
       <div class="menu-right">›</div>
     </a>
 
-    <a class="menu-item" href="#" onclick="openTelegram(event)">
+    <a class="menu-item" href="#" onclick="openYoutube(event)">
       <div class="menu-left">
-        <div class="menu-ic">✈️</div>
+        <div class="menu-ic">▶️</div>
         <div class="menu-txt">
-          <div class="menu-name">@montella</div>
-          <div class="menu-sub" id="mTgSub">Открыть Telegram</div>
+          <div class="menu-name">YouTube</div>
+          <div class="menu-sub" id="mYoutubeSub">Открыть YouTube</div>
+        </div>
+      </div>
+      <div class="menu-right">›</div>
+    </a>
+
+    <a class="menu-item" href="#" onclick="openFacebook(event)">
+      <div class="menu-left">
+        <div class="menu-ic">f</div>
+        <div class="menu-txt">
+          <div class="menu-name">Facebook</div>
+          <div class="menu-sub" id="mFacebookSub">Открыть Facebook</div>
         </div>
       </div>
       <div class="menu-right">›</div>
@@ -581,27 +634,21 @@ body{
         <div style="font-weight:900; margin-bottom:6px;" id="aboutAddrLabel">📍 Адрес</div>
         <div style="font-weight:900; color:#fff; opacity:.92; line-height:1.25;" id="aboutAddrText"></div>
 
-        <div style="height:10px;"></div>
-
-        <button class="btn" style="width:100%; min-width:auto;" type="button" onclick="openRouteFromAbout(event)" id="aboutRouteBtn">
-          📍 Построить маршрут
-        </button>
-
         <div style="height:12px;"></div>
 
         <div style="font-weight:900; margin-bottom:6px;" id="aboutPhoneLabel">📞 Телефон</div>
         <div style="display:flex; flex-direction:column; gap:6px;">
-          <a href="tel:+998901234567" onclick="callPhone(event)" style="text-decoration:none; font-weight:900; color:var(--accent);">
-            +998 (90) 123-45-67
+          <a href="tel:+998787771771" onclick="callPhone(event)" style="text-decoration:none; font-weight:900; color:var(--accent);">
+            +998 (78) 777-17-71
           </a>
         </div>
 
         <div style="height:12px;"></div>
 
         <div style="font-weight:900; margin-bottom:6px;" id="aboutHoursLabel">🕒 График работы</div>
-        <div style="font-weight:900; color:#fff; opacity:.92;" id="aboutHoursText"></div>
+        <div style="font-weight:900; color:#fff; opacity:.92; line-height:1.55;" id="aboutHoursText"></div>
 
-        <div style="margin-top:10px;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(17,24,39,.55);font-weight:800;line-height:1.28;color:#E5E7EB;" id="aboutDescText"></div>
+        <div style="margin-top:10px;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(17,24,39,.55);font-weight:800;line-height:1.35;color:#E5E7EB;" id="aboutDescText"></div>
       </div>
     </div>
 
@@ -621,26 +668,41 @@ body{
   <button class="btn" id="langTJ" onclick="setLang('tj',this)"><span class="lang-flag">🇹🇯</span>TJ</button>
 </div>
 
-<div class="consult-wrap" id="consultWrap">
-  <div class="consult-card">
-    <div class="consult-head" id="consultTitle">💬 Связаться с Montella</div>
-    <div class="consult-sub" id="consultSub">Например: хочу узнать подробнее о компании</div>
-    <div class="consult-actions">
-      <input class="consult-input" id="consultInput" placeholder="Напишите запрос..." />
-      <button class="consult-send" onclick="sendConsultMain(event)" id="consultBtn">Отправить</button>
-    </div>
-    <div style="margin-top:10px;font-size:12px;opacity:.75;font-weight:800;color:#E5E7EB;" id="consultHint">
-      Запрос уйдёт администратору.
-    </div>
-  </div>
-</div>
-
 <div class="popular-wrap" id="popularWrap">
   <div class="popular-title" id="popularTitle">🔥 Популярное</div>
   <div class="popular-row" id="popularRow"></div>
 </div>
 
 <div class="products" id="products"></div>
+
+<!-- ✅ Блок связи перенесён в самый низ -->
+<div class="consult-wrap" id="consultWrap">
+  <div class="consult-card">
+    <div class="consult-head" id="consultTitle">💬 Связаться с менеджером</div>
+    <div class="consult-sub" id="consultSub">Пример: Хочу заказать доставку</div>
+    <div class="consult-actions">
+      <input
+        class="consult-phone"
+        id="consultPhone"
+        type="tel"
+        inputmode="tel"
+        placeholder="+998 (__) ___-__-__"
+        oninput="formatPhoneInput(this)"
+      />
+      <input
+        class="consult-input"
+        id="consultInput"
+        placeholder="Хочу заказать доставку"
+        onclick="requestPhoneFirst()"
+        onfocus="requestPhoneFirst()"
+      />
+      <button class="consult-send" onclick="sendConsultMain(event)" id="consultBtn">Отправить</button>
+    </div>
+    <div style="margin-top:10px;font-size:12px;opacity:.75;font-weight:800;color:#E5E7EB;" id="consultHint">
+      Сначала укажите номер телефона, затем отправьте запрос менеджеру.
+    </div>
+  </div>
+</div>
 
 <div class="popup" id="popup"><div class="popup-box" id="popupText">✅</div></div>
 
@@ -675,35 +737,37 @@ setVH();
 window.addEventListener('resize', setVH, {passive:true});
 window.addEventListener('orientationchange', ()=>setTimeout(setVH, 250), {passive:true});
 
+/* splash hide after 5 sec */
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    document.getElementById('splashScreen')?.classList.add('hide');
+  }, 5000);
+});
+
 /* ✅ LINKS + ADMIN */
-const YANDEX_OBJ_URL = "https://yandex.uz/maps/";
-const HEADER_LOCATION_URL = YANDEX_OBJ_URL;
+const YANDEX_OBJ_URL = "https://yandex.uz/maps/org/6496150310/?ll=69.375703%2C41.378435&z=15";
 const REVIEW_URL = YANDEX_OBJ_URL;
 const ADMIN_ID = 6013591658;
 
 /* ✅ PHONES */
-const PHONE1_DISPLAY = "+998 (90) 123-45-67";
-const PHONE1_TEL = "tel:+998901234567";
+const PHONE1_DISPLAY = "+998 (78) 777-17-71";
+const PHONE1_TEL = "tel:+998787771771";
 
 /* ✅ SOCIAL */
-const INSTAGRAM_URL = "https://www.instagram.com/montella/";
-const TELEGRAM_URL  = "https://t.me/montella";
+const INSTAGRAM_URL = "https://www.instagram.com/montella.official/";
+const YOUTUBE_URL  = "https://www.youtube.com/@navruzinternationalcorp.4956/shorts";
+const FACEBOOK_URL = "https://www.facebook.com/Montellauz";
 
 const ABOUT_ADDR = "г. Самарканд, ваш адрес";
-const ABOUT_HOURS = "09:00–21:00";
+const ABOUT_HOURS = "ПН-ПТ с 09:00-18:00\nСуббота — Выходной\nВоскресенье — Выходной";
 
 function openLink(url){
   try{Telegram.WebApp.openLink(url);}catch(_){window.open(url,'_blank');}
 }
-function openHeaderLocation(){ openLink(HEADER_LOCATION_URL); }
 function openReview(e){
   try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
   closeTopMenu();
   openLink(REVIEW_URL);
-}
-function openRouteFromAbout(e){
-  try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
-  openLink(HEADER_LOCATION_URL);
 }
 function callPhone(e){
   try{e.preventDefault();e.stopPropagation();}catch(_){}
@@ -714,10 +778,15 @@ function openInstagram(e){
   closeTopMenu();
   openLink(INSTAGRAM_URL);
 }
-function openTelegram(e){
+function openYoutube(e){
   try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
   closeTopMenu();
-  openLink(TELEGRAM_URL);
+  openLink(YOUTUBE_URL);
+}
+function openFacebook(e){
+  try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
+  closeTopMenu();
+  openLink(FACEBOOK_URL);
 }
 
 const tgUser = Telegram.WebApp.initDataUnsafe?.user || {};
@@ -729,119 +798,127 @@ const tg_id = tgUser.id || "";
 const UI = {
   ru:{
     menu:'Меню',
-    galleryTitle:'Галерея', gallerySub:'Наши работы',
     callTitle:'Позвонить', callSub: PHONE1_DISPLAY,
     instaSub:'Открыть Instagram',
-    tgSub:'Открыть Telegram',
+    youtubeSub:'Открыть YouTube',
+    facebookSub:'Открыть Facebook',
     reviewTitle:'Оставить отзыв', reviewSub:'Отзывы',
-    aboutTitle:'О нас', aboutSub:'Адрес, телефоны, график',
-    aboutAddr:'📍 Адрес', aboutRoute:'📍 Построить маршрут',
+    aboutTitle:'О нас', aboutSub:'Адрес, телефон, график',
+    aboutAddr:'📍 Адрес',
     aboutPhone:'📞 Телефон', aboutHours:'🕒 График работы',
     searchResults:'Результаты поиска',
     searchPh:'Поиск направления...',
     welcome:'👋 Добро пожаловать',
+    slogan:'Легкая на каждый день!',
     brandSub1:'КОМПАНИЯ',
     brandSub2:'БРЕНД • СТИЛЬ • РАЗВИТИЕ',
     popular:'🔥 Популярное',
-    consult:'💬 Связаться с Montella',
-    consultSub:'Например: хочу узнать подробнее о компании',
-    consultPh:'Напишите запрос...',
+    consult:'💬 Связаться с менеджером',
+    consultSub:'Пример: Хочу заказать доставку',
+    consultPh:'Хочу заказать доставку',
+    consultPhonePh:'Введите номер телефона',
     consultBtn:'Отправить',
-    consultSent:'✅ Запрос отправлен админу',
+    consultSent:'✅ Запрос отправлен менеджеру',
     consultNeedText:'Напишите запрос',
-    consultHint:'Запрос уйдёт администратору.',
+    consultNeedPhone:'Введите номер телефона',
+    consultHint:'Сначала укажите номер телефона, затем отправьте запрос менеджеру.',
     nothingFound:'Ничего не найдено',
     priceFrom:'Подробнее',
     kModel:'Направление',
-    kRegion:'Описание',
-    gallerySoon:'Галерея скоро появится'
+    kRegion:'Описание'
   },
   uz:{
     menu:'Menyu',
-    galleryTitle:'Galereya', gallerySub:'Bizning ishlarimiz',
     callTitle:"Qo'ng'iroq qilish", callSub: PHONE1_DISPLAY,
     instaSub:"Instagramni ochish",
-    tgSub:"Telegramni ochish",
+    youtubeSub:"YouTubeni ochish",
+    facebookSub:"Facebookni ochish",
     reviewTitle:'Fikr qoldirish', reviewSub:'Sharhlar',
     aboutTitle:'Biz haqimizda', aboutSub:'Manzil, telefon, ish vaqti',
-    aboutAddr:'📍 Manzil', aboutRoute:"📍 Yo‘l ko‘rsatish",
+    aboutAddr:'📍 Manzil',
     aboutPhone:'📞 Telefon', aboutHours:'🕒 Ish vaqti',
     searchResults:'Qidiruv natijalari',
     searchPh:"Yo‘nalishni qidirish...",
     welcome:'👋 Xush kelibsiz',
+    slogan:'Har kun uchun yengillik!',
     brandSub1:'KOMPANIYA',
     brandSub2:'BREND • USLUB • RIVOJLANISH',
     popular:'🔥 Ommabop',
-    consult:'💬 Montella bilan aloqa',
-    consultSub:'Masalan: kompaniya haqida batafsil ma’lumot',
-    consultPh:'So‘rov yozing...',
+    consult:'💬 Menejer bilan aloqa',
+    consultSub:'Misol: Yetkazib berishga buyurtma bermoqchiman',
+    consultPh:'Yetkazib berishga buyurtma bermoqchiman',
+    consultPhonePh:'Telefon raqamingizni kiriting',
     consultBtn:'Yuborish',
-    consultSent:'✅ So‘rov adminga yuborildi',
+    consultSent:'✅ So‘rov menejerga yuborildi',
     consultNeedText:'So‘rov yozing',
-    consultHint:'So‘rov adminga yuboriladi.',
+    consultNeedPhone:'Telefon raqamini kiriting',
+    consultHint:'Avval telefon raqamingizni kiriting, keyin so‘rov yuboring.',
     nothingFound:'Hech narsa topilmadi',
     priceFrom:'Batafsil',
     kModel:'Yo‘nalish',
-    kRegion:'Tavsif',
-    gallerySoon:"Galereya tez orada"
+    kRegion:'Tavsif'
   },
   en:{
     menu:'Menu',
-    galleryTitle:'Gallery', gallerySub:'Our works',
     callTitle:'Call', callSub: PHONE1_DISPLAY,
     instaSub:'Open Instagram',
-    tgSub:'Open Telegram',
+    youtubeSub:'Open YouTube',
+    facebookSub:'Open Facebook',
     reviewTitle:'Leave a review', reviewSub:'Reviews',
     aboutTitle:'About us', aboutSub:'Address, phone, hours',
-    aboutAddr:'📍 Address', aboutRoute:'📍 Get directions',
+    aboutAddr:'📍 Address',
     aboutPhone:'📞 Phone', aboutHours:'🕒 Working hours',
     searchResults:'Search results',
     searchPh:'Search direction...',
     welcome:'👋 Welcome',
+    slogan:'Light for every day!',
     brandSub1:'COMPANY',
     brandSub2:'BRAND • STYLE • GROWTH',
     popular:'🔥 Popular',
-    consult:'💬 Contact Montella',
-    consultSub:'Example: I want to know more about the company',
-    consultPh:'Type your request...',
+    consult:'💬 Contact manager',
+    consultSub:'Example: I want to order delivery',
+    consultPh:'I want to order delivery',
+    consultPhonePh:'Enter phone number',
     consultBtn:'Send',
-    consultSent:'✅ Sent to admin',
+    consultSent:'✅ Sent to manager',
     consultNeedText:'Type a request',
-    consultHint:'Request will be sent to admin.',
+    consultNeedPhone:'Enter phone number',
+    consultHint:'Enter your phone number first, then send the request.',
     nothingFound:'Nothing found',
     priceFrom:'Learn more',
     kModel:'Direction',
-    kRegion:'Description',
-    gallerySoon:'Gallery is coming soon'
+    kRegion:'Description'
   },
   tj:{
     menu:'Меню',
-    galleryTitle:'Галерея', gallerySub:'Корҳои мо',
     callTitle:'Занг задан', callSub: PHONE1_DISPLAY,
     instaSub:'Instagram-ро кушоед',
-    tgSub:'Telegram-ро кушоед',
+    youtubeSub:'YouTube-ро кушоед',
+    facebookSub:'Facebook-ро кушоед',
     reviewTitle:'Шарҳ гузоред', reviewSub:'Шарҳҳо',
     aboutTitle:'Дар бораи мо', aboutSub:'Суроға, телефон, соатҳо',
-    aboutAddr:'📍 Суроға', aboutRoute:'📍 Роҳнамо',
+    aboutAddr:'📍 Суроға',
     aboutPhone:'📞 Телефон', aboutHours:'🕒 Соатҳои кор',
     searchResults:'Натиҷаҳои ҷустуҷӯ',
     searchPh:'Ҷустуҷӯи самт...',
     welcome:'👋 Хуш омадед',
+    slogan:'Сабукӣ барои ҳар рӯз!',
     brandSub1:'КОМПАНИЯ',
     brandSub2:'БРЕНД • УСЛУБ • РУШД',
     popular:'🔥 Маъмул',
-    consult:'💬 Тамос бо Montella',
-    consultSub:'Масалан: мехоҳам маълумоти бештар гирам',
-    consultPh:'Дархост нависед...',
+    consult:'💬 Тамос бо менеҷер',
+    consultSub:'Мисол: Мехоҳам доставка фармоиш диҳам',
+    consultPh:'Мехоҳам доставка фармоиш диҳам',
+    consultPhonePh:'Рақами телефонро ворид кунед',
     consultBtn:'Фиристодан',
-    consultSent:'✅ Ба админ фиристода шуд',
+    consultSent:'✅ Ба менеҷер фиристода шуд',
     consultNeedText:'Дархост нависед',
-    consultHint:'Дархост ба администратор меравад.',
+    consultNeedPhone:'Рақами телефонро ворид кунед',
+    consultHint:'Аввал рақами телефонро ворид кунед, баъд дархостро фиристед.',
     nothingFound:'Ягон чиз ёфт нашуд',
     priceFrom:'Муфассал',
     kModel:'Самт',
-    kRegion:'Тавсиф',
-    gallerySoon:'Галерея ба зудӣ'
+    kRegion:'Тавсиф'
   }
 };
 
@@ -929,12 +1006,6 @@ function searchProducts(){
 function openTopMenu(){ closeSearch(); document.getElementById('menuBackdrop').classList.add('show'); document.getElementById('menuSheet').classList.add('show'); }
 function closeTopMenu(){ document.getElementById('menuBackdrop').classList.remove('show'); document.getElementById('menuSheet').classList.remove('show'); }
 
-function openGallery(e){
-  try{ e.preventDefault(); e.stopPropagation(); }catch(_){}
-  closeTopMenu();
-  showToast(UI[lang].gallerySoon);
-}
-
 function cardHTML(it){
   const id=it.id;
   return `
@@ -1002,12 +1073,58 @@ function showToast(t){
   p.classList.add('show');
   tx.innerText = t || "✅";
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>p.classList.remove('show'), 1400);
+  toastTimer=setTimeout(()=>p.classList.remove('show'), 1600);
+}
+
+function requestPhoneFirst(){
+  const phoneInput = document.getElementById('consultPhone');
+  if(phoneInput.style.display !== 'block'){
+    phoneInput.style.display = 'block';
+    phoneInput.placeholder = UI[lang].consultPhonePh;
+    setTimeout(()=>phoneInput.focus(), 50);
+    showToast(UI[lang].consultNeedPhone);
+  }
+}
+
+function digitsOnly(v){
+  return String(v || '').replace(/\D/g,'');
+}
+
+function formatPhoneInput(el){
+  let v = digitsOnly(el.value);
+
+  if(v.startsWith('998')) v = v.slice(3);
+  if(v.length > 9) v = v.slice(0, 9);
+
+  let out = '+998';
+  if(v.length > 0) out += ' (' + v.slice(0,2);
+  if(v.length >= 2) out += ')';
+  if(v.length > 2) out += ' ' + v.slice(2,5);
+  if(v.length > 5) out += '-' + v.slice(5,7);
+  if(v.length > 7) out += '-' + v.slice(7,9);
+
+  el.value = out;
+}
+
+function getNormalizedPhone(){
+  const val = document.getElementById('consultPhone')?.value || '';
+  const digits = digitsOnly(val);
+  if(digits.length === 12 && digits.startsWith('998')) return digits;
+  if(digits.length === 9) return '998' + digits;
+  return '';
 }
 
 function sendConsultMain(e){
   try{e.preventDefault();e.stopPropagation();}catch(_){}
   const text = (document.getElementById('consultInput')?.value || '').trim();
+  const phone = getNormalizedPhone();
+
+  if(!phone){
+    requestPhoneFirst();
+    showToast(UI[lang].consultNeedPhone);
+    return;
+  }
+
   if(!text){
     showToast(UI[lang].consultNeedText);
     return;
@@ -1018,6 +1135,7 @@ function sendConsultMain(e){
     to_admin_id: ADMIN_ID,
     brand:'MONTELLA',
     tg:{id:tg_id,username:tg_username,first_name:tg_first_name},
+    phone:'+' + phone,
     text,
     time: new Date().toISOString()
   };
@@ -1049,14 +1167,12 @@ function toggleAbout(){
 function applyUI(){
   document.getElementById('menuTitle').innerText = UI[lang].menu;
 
-  document.getElementById('mGalleryTitle').innerText = UI[lang].galleryTitle;
-  document.getElementById('mGallerySub').innerText   = UI[lang].gallerySub;
-
   document.getElementById('mCallTitle').innerText = UI[lang].callTitle;
   document.getElementById('mCallSub').innerText   = UI[lang].callSub;
 
   document.getElementById('mInstaSub1').innerText = UI[lang].instaSub;
-  document.getElementById('mTgSub').innerText     = UI[lang].tgSub;
+  document.getElementById('mYoutubeSub').innerText = UI[lang].youtubeSub;
+  document.getElementById('mFacebookSub').innerText = UI[lang].facebookSub;
 
   document.getElementById('mReviewTitle').innerText = UI[lang].reviewTitle;
   document.getElementById('mReviewSub').innerText   = UI[lang].reviewSub;
@@ -1065,28 +1181,29 @@ function applyUI(){
   document.getElementById('mAboutSub').innerText   = UI[lang].aboutSub;
 
   document.getElementById('aboutAddrLabel').innerText  = UI[lang].aboutAddr;
-  document.getElementById('aboutRouteBtn').innerText   = UI[lang].aboutRoute;
   document.getElementById('aboutPhoneLabel').innerText = UI[lang].aboutPhone;
   document.getElementById('aboutHoursLabel').innerText = UI[lang].aboutHours;
   document.getElementById('aboutHoursText').innerText  = ABOUT_HOURS;
   document.getElementById('aboutAddrText').innerText   = ABOUT_ADDR;
 
   document.getElementById('aboutDescText').innerHTML =
-    (lang==='ru' ? `Montella — современная компания.<br>Бренд, стиль, визуальная подача, развитие и презентация компании.<br><br><b>📍 Адрес:</b> ${ABOUT_ADDR}<br><b>🕒 График:</b> ${ABOUT_HOURS}`
-    : lang==='uz' ? `Montella — zamonaviy kompaniya.<br>Brend, uslub, vizual taqdimot va kompaniya rivoji.<br><br><b>📍 Manzil:</b> ${ABOUT_ADDR}<br><b>🕒 Ish vaqti:</b> ${ABOUT_HOURS}`
-    : lang==='tj' ? `Montella — ширкати муосир.<br>Бренд, услуб, пешниҳоди визуалӣ ва рушди ширкат.<br><br><b>📍 Суроға:</b> ${ABOUT_ADDR}<br><b>🕒 Соатҳо:</b> ${ABOUT_HOURS}`
-    : `Montella — a modern company.<br>Brand, style, visual presentation and company growth.<br><br><b>📍 Address:</b> ${ABOUT_ADDR}<br><b>🕒 Hours:</b> ${ABOUT_HOURS}`);
+    (lang==='ru' ? `Montella — современная компания.<br>Бренд, стиль, визуальная подача, развитие и презентация компании.<br><br><b>📍 Адрес:</b> ${ABOUT_ADDR}<br><b>🕒 График:</b><br>ПН-ПТ с 09:00-18:00<br>Суббота — Выходной<br>Воскресенье — Выходной`
+    : lang==='uz' ? `Montella — zamonaviy kompaniya.<br>Brend, uslub, vizual taqdimot va kompaniya rivoji.<br><br><b>📍 Manzil:</b> ${ABOUT_ADDR}<br><b>🕒 Ish vaqti:</b><br>Dushanba-Juma 09:00-18:00<br>Shanba — Dam olish<br>Yakshanba — Dam olish`
+    : lang==='tj' ? `Montella — ширкати муосир.<br>Бренд, услуб, пешниҳоди визуалӣ ва рушди ширкат.<br><br><b>📍 Суроға:</b> ${ABOUT_ADDR}<br><b>🕒 Соатҳои кор:</b><br>Душанбе-Ҷумъа 09:00-18:00<br>Шанбе — Истироҳат<br>Якшанбе — Истироҳат`
+    : `Montella — a modern company.<br>Brand, style, visual presentation and company growth.<br><br><b>📍 Address:</b> ${ABOUT_ADDR}<br><b>🕒 Hours:</b><br>Mon-Fri 09:00-18:00<br>Saturday — Closed<br>Sunday — Closed`);
 
   document.getElementById('popularTitle').innerText = UI[lang].popular;
 
   document.getElementById('consultTitle').innerText = UI[lang].consult;
   document.getElementById('consultSub').innerText   = UI[lang].consultSub;
   document.getElementById('consultInput').placeholder = UI[lang].consultPh;
+  document.getElementById('consultPhone').placeholder = UI[lang].consultPhonePh;
   document.getElementById('consultBtn').innerText = UI[lang].consultBtn;
   document.getElementById('consultHint').innerText = UI[lang].consultHint;
 
   document.getElementById('branchTitle').innerText  = UI[lang].brandSub1;
   document.getElementById('branchTitle2').innerText = UI[lang].brandSub2;
+  document.getElementById('brandSlogan').innerText = UI[lang].slogan;
 
   document.getElementById('kModel').innerText  = UI[lang].kModel;
   document.getElementById('kRegion').innerText = UI[lang].kRegion;
