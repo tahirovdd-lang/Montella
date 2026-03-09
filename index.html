@@ -53,7 +53,6 @@
   --r-md:22px;
 
   --vh: 1vh;
-  --sticky-h: 86px;
 
   --accent:#1E3A8A;
   --accent2:#1D4ED8;
@@ -108,8 +107,12 @@ body{
 .splash-screen img{
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
+  object-position:center;
   display:block;
+  max-width:100vw;
+  max-height:100vh;
+  background:#000;
 }
 
 /* header */
@@ -132,13 +135,13 @@ body{
   align-items:flex-start;
   justify-content:center;
   padding-left:2px;
-  padding-right:70px;
+  padding-right:108px;
   flex:1 1 auto;
   min-width:0;
 }
 .header img{
   position:absolute;
-  right:48px;
+  right:52px;
   top:50%;
   transform:translateY(-50%);
   width:74px;
@@ -198,7 +201,7 @@ body{
   bottom:10px;
   display:flex;
   flex-direction:column;
-  justify-content:center;
+  justify-content:space-between;
   align-items:flex-end;
   z-index:90;
 }
@@ -231,7 +234,6 @@ body{
   -webkit-overflow-scrolling:touch;
 }
 
-/* base button */
 .btn{
   padding:12px 18px;
   border-radius:28px;
@@ -261,7 +263,6 @@ body{
 }
 .lang-flag{margin-right:8px; font-size:16px; line-height:1;}
 
-/* inputs */
 .input{
   margin:8px auto;display:block;padding:14px;width:85%;
   border-radius:22px;font-size:15px;border:1px solid var(--stroke2);
@@ -272,76 +273,134 @@ body{
 }
 
 /* products */
-.products{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding:12px;}
+.products{display:grid;grid-template-columns:1fr;gap:16px;padding:12px;}
 
-/* cards */
-.card{
+/* category cards */
+.category-card{
   border-radius:24px;
-  padding:12px;
-  text-align:center;
+  padding:14px;
   background: rgba(30,41,59,.60);
   border:1px solid var(--stroke2);
   box-shadow: 0 12px 26px rgba(0,0,0,.55);
-  transition:.25s;
   color:#E5E7EB;
-  transform:perspective(900px) rotateX(0deg) rotateY(0deg) scale(1);
-  cursor:pointer;
 }
-.card:hover{
-  transform:perspective(900px) rotateX(4deg) rotateY(-4deg) scale(1.03);
-  box-shadow:0 20px 40px rgba(0,0,0,.65);
-}
-.card:active{transform:scale(.96);}
-
-.img{height:168px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;}
-.img img{
-  max-width:152px;
-  max-height:152px;
-  object-fit:cover;
-  transform:scale(1.00);
-  border-radius:20px;
-}
-
-.item-name{
-  margin-top:2px;
-  padding:0 6px;
-  font-weight:900;
-  line-height:1.15;
-  min-height:42px;
+.category-head{
   display:flex;
   align-items:center;
-  justify-content:center;
-  word-break:break-word;
+  gap:12px;
+  margin-bottom:12px;
+}
+.category-head img{
+  width:68px;
+  height:68px;
+  object-fit:cover;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+}
+.category-title{
+  font-size:18px;
+  font-weight:900;
+  line-height:1.15;
+}
+.category-desc{
+  margin-top:4px;
+  font-size:13px;
+  font-weight:800;
+  color:rgba(229,231,235,.78);
+  line-height:1.25;
+}
+.items-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.product-item{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.05);
+  border-radius:18px;
+  padding:12px;
+}
+.product-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+.product-name{
+  font-weight:900;
+  line-height:1.2;
+  flex:1 1 auto;
+}
+.product-price{
+  font-weight:900;
+  color:#fff;
+  white-space:nowrap;
+}
+.product-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:10px;
+}
+.product-meta{
+  font-size:12px;
+  font-weight:800;
+  color:rgba(229,231,235,.72);
+}
+.qty-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.qty-btn{
+  width:34px;
+  height:34px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(180deg, var(--accent), var(--accent2));
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 20px rgba(0,0,0,.35);
+}
+.qty-btn:active{transform:scale(.96);}
+.qty-val{
+  min-width:22px;
   text-align:center;
+  font-weight:900;
+  font-size:16px;
+  color:#fff;
 }
 
-/* carousels */
+/* popular */
 .popular-wrap{width:100%;padding:4px 12px 6px;}
 .popular-title{width:100%;font-weight:900;padding:8px 2px 10px;display:flex;align-items:center;gap:8px;color:#E5E7EB;}
 .popular-row{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;}
 .pop-card{
-  min-width:180px;border-radius:24px;padding:12px;
+  min-width:190px;border-radius:24px;padding:12px;
   background: rgba(30,41,59,.60);
   border:1px solid var(--stroke2);
   box-shadow: 0 12px 26px rgba(0,0,0,.55);
-  cursor:pointer;transition:.15s;position:relative;
   color:#E5E7EB;
-  transform:perspective(900px) rotateX(0deg) rotateY(0deg) scale(1);
 }
-.pop-card:hover{
-  transform:perspective(900px) rotateX(4deg) rotateY(-4deg) scale(1.02);
-}
-.pop-card:active{transform:scale(.97);}
 .pop-img{
-  height:168px;border-radius:20px;overflow:hidden;display:flex;align-items:center;justify-content:center;
-  background: transparent;cursor:pointer;margin-bottom:6px;
+  height:112px;border-radius:20px;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background: transparent;margin-bottom:8px;
 }
 .pop-img img{
-  max-width:152px;max-height:152px;object-fit:cover;transform:scale(.94);border-radius:20px;
+  width:100%;height:100%;object-fit:cover;border-radius:20px;
 }
 .pop-name{
-  margin-top:2px;padding:0 6px;font-weight:900;line-height:1.15;min-height:42px;
-  display:flex;align-items:center;justify-content:center;word-break:break-word;text-align:center;
+  font-weight:900;line-height:1.15;
+}
+.pop-sub{
+  margin-top:4px;
+  font-size:12px;
+  font-weight:800;
+  opacity:.75;
 }
 
 /* popup */
@@ -372,7 +431,6 @@ body{
   background: rgba(15,23,42,.96);
   border:1px solid rgba(255,255,255,.14);
   box-shadow:0 18px 44px rgba(0,0,0,.60);
-  transform: translateZ(0);
 }
 .img-modal-top{
   display:flex; align-items:center; justify-content:space-between;
@@ -421,7 +479,7 @@ body{
 .spec-k{color: rgba(229,231,235,.72);font-weight:900;flex:0 0 auto;}
 .spec-v{color:#fff;text-align:right;word-break:break-word;flex: 1 1 auto;}
 
-/* menu sheet */
+/* menu */
 .menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.18s;z-index:1000;}
 .menu-backdrop.show{opacity:1;pointer-events:auto;}
 .menu-sheet{
@@ -452,7 +510,7 @@ body{
 .menu-sub{font-size:12px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;color:rgba(229,231,235,.75);}
 .menu-right{opacity:.65;font-weight:900;color:rgba(229,231,235,.75);}
 
-/* consultation block */
+/* consult */
 .consult-wrap{
   padding:10px 12px 4px;
   margin-top:8px;
@@ -503,9 +561,11 @@ body{
   }
   .brand-title{font-size:24px;}
   .brand-slogan{font-size:12.5px;}
-  .header-left{padding-right:62px;}
+  .header-left{padding-right:94px;}
   .input{width:92%;}
   .products{gap:14px;}
+  .product-top{flex-direction:column;}
+  .product-bottom{flex-direction:column;align-items:flex-start;}
 }
 @media (max-width:360px){
   .header img{width:60px;height:60px;right:44px;}
@@ -514,7 +574,7 @@ body{
   .brand-phone a{font-size:13px;}
   .btn{min-width:108px;padding:12px 16px;}
   .langs .btn{min-width:86px;padding:10px 10px;font-size:13px;}
-  .header-left{padding-right:56px;}
+  .header-left{padding-right:88px;}
 }
 </style>
 </head>
@@ -543,6 +603,9 @@ body{
     <div class="act-btn" onclick="openTopMenu()" title="Меню">
       <div class="burger"><span></span><span></span><span></span></div>
     </div>
+    <div class="act-btn" onclick="toggleSearch()" title="Поиск">
+      <span class="act-ico">🔍</span>
+    </div>
   </div>
 </div>
 
@@ -557,7 +620,6 @@ body{
   </div>
 
   <div class="menu-list">
-
     <a class="menu-item" href="tel:+998787771771" onclick="closeTopMenu()">
       <div class="menu-left">
         <div class="menu-ic">📞</div>
@@ -641,12 +703,11 @@ body{
         <div style="height:12px;"></div>
 
         <div style="font-weight:900; margin-bottom:6px;" id="aboutHoursLabel">🕒 График работы</div>
-        <div style="font-weight:900; color:#fff; opacity:.92; line-height:1.55;" id="aboutHoursText"></div>
+        <div style="font-weight:900; color:#fff; opacity:.92; line-height:1.55; white-space:pre-line;" id="aboutHoursText"></div>
 
         <div style="margin-top:10px;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(17,24,39,.55);font-weight:800;line-height:1.35;color:#E5E7EB;" id="aboutDescText"></div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -703,7 +764,7 @@ body{
 <div class="img-modal" id="imgModal" onclick="closeImgModal(event)">
   <div class="img-modal-box" onclick="event.stopPropagation()">
     <div class="img-modal-top">
-      <div class="img-modal-title" id="imgModalTitle">Услуга</div>
+      <div class="img-modal-title" id="imgModalTitle">Категория</div>
       <button class="img-modal-close" onclick="closeImgModal(event)">×</button>
     </div>
 
@@ -737,8 +798,7 @@ window.addEventListener('load', function(){
   }, 5000);
 });
 
-const YANDEX_OBJ_URL = "https://yandex.uz/maps/org/6496150310/?ll=69.375703%2C41.378435&z=15";
-const REVIEW_URL = YANDEX_OBJ_URL;
+const REVIEW_URL = "https://yandex.uz/maps/org/6496150310/?ll=69.375703%2C41.378435&z=15";
 const ADMIN_ID = 6013591658;
 
 const PHONE1_DISPLAY = "+998 (78) 777-17-71";
@@ -796,7 +856,7 @@ const UI = {
     aboutAddr:'📍 Адрес',
     aboutPhone:'📞 Телефон', aboutHours:'🕒 График работы',
     searchResults:'Результаты поиска',
-    searchPh:'Поиск категории...',
+    searchPh:'Поиск товара...',
     welcome:'👋 Добро пожаловать',
     slogan:'Легкая на каждый день!',
     popular:'🔥 Популярное',
@@ -810,9 +870,10 @@ const UI = {
     consultNeedPhone:'Введите номер телефона',
     consultHint:'Сначала укажите номер телефона, затем отправьте запрос менеджеру.',
     nothingFound:'Ничего не найдено',
-    priceFrom:'Подробнее',
     kModel:'Категория',
-    kRegion:'Описание'
+    kRegion:'Описание',
+    qtyAdded:'Количество изменено',
+    fromPrice:'от'
   },
   uz:{
     menu:'Menyu',
@@ -825,7 +886,7 @@ const UI = {
     aboutAddr:'📍 Manzil',
     aboutPhone:'📞 Telefon', aboutHours:'🕒 Ish vaqti',
     searchResults:'Qidiruv natijalari',
-    searchPh:'Kategoriya qidirish...',
+    searchPh:'Mahsulot qidirish...',
     welcome:'👋 Xush kelibsiz',
     slogan:'Har kun uchun yengillik!',
     popular:'🔥 Ommabop',
@@ -839,9 +900,10 @@ const UI = {
     consultNeedPhone:'Telefon raqamini kiriting',
     consultHint:'Avval telefon raqamingizni kiriting, keyin so‘rov yuboring.',
     nothingFound:'Hech narsa topilmadi',
-    priceFrom:'Batafsil',
     kModel:'Kategoriya',
-    kRegion:'Tavsif'
+    kRegion:'Tavsif',
+    qtyAdded:'Soni o‘zgardi',
+    fromPrice:'dan'
   },
   en:{
     menu:'Menu',
@@ -854,7 +916,7 @@ const UI = {
     aboutAddr:'📍 Address',
     aboutPhone:'📞 Phone', aboutHours:'🕒 Working hours',
     searchResults:'Search results',
-    searchPh:'Search category...',
+    searchPh:'Search product...',
     welcome:'👋 Welcome',
     slogan:'Light for every day!',
     popular:'🔥 Popular',
@@ -868,9 +930,10 @@ const UI = {
     consultNeedPhone:'Enter phone number',
     consultHint:'Enter your phone number first, then send the request.',
     nothingFound:'Nothing found',
-    priceFrom:'Learn more',
     kModel:'Category',
-    kRegion:'Description'
+    kRegion:'Description',
+    qtyAdded:'Quantity updated',
+    fromPrice:'from'
   },
   tj:{
     menu:'Меню',
@@ -883,7 +946,7 @@ const UI = {
     aboutAddr:'📍 Суроға',
     aboutPhone:'📞 Телефон', aboutHours:'🕒 Соатҳои кор',
     searchResults:'Натиҷаҳои ҷустуҷӯ',
-    searchPh:'Ҷустуҷӯи категория...',
+    searchPh:'Ҷустуҷӯи маҳсулот...',
     welcome:'👋 Хуш омадед',
     slogan:'Сабукӣ барои ҳар рӯз!',
     popular:'🔥 Маъмул',
@@ -897,19 +960,72 @@ const UI = {
     consultNeedPhone:'Рақами телефонро ворид кунед',
     consultHint:'Аввал рақами телефонро ворид кунед, баъд дархостро фиристед.',
     nothingFound:'Ягон чиз ёфт нашуд',
-    priceFrom:'Муфассал',
     kModel:'Категория',
-    kRegion:'Тавсиф'
+    kRegion:'Тавсиф',
+    qtyAdded:'Миқдор иваз шуд',
+    fromPrice:'аз'
   }
 };
 
 function mkName(ru, uz, en, tj){ return {ru, uz, en, tj}; }
 
 const SERVICES = [
-  { id:'water',      img:'images/services_water.jpg',      n: mkName('Минеральная вода','Mineral suv','Mineral water','Оби минералӣ'), desc: mkName('Освежающая минеральная вода на каждый день','Har kun uchun tetiklashtiruvchi mineral suv','Refreshing mineral water for every day','Оби минералии тароватбахш барои ҳар рӯз') },
-  { id:'energy',     img:'images/services_energy.jpg',     n: mkName('Энергетические напитки','Energetik ichimliklar','Energy drinks','Нӯшокиҳои энергетикӣ'), desc: mkName('Энергетические напитки для бодрости и активности','Tetiklik va faollik uchun energetik ichimliklar','Energy drinks for power and activity','Нӯшокиҳои энергетикӣ барои нерӯ ва фаъолият') },
-  { id:'tea',        img:'images/services_tea.jpg',        n: mkName('Чай','Choy','Tea','Чой'), desc: mkName('Классический и ароматный чай','An’anaviy va xushbo‘y choy','Classic and aromatic tea','Чои классикӣ ва хушбӯй') },
-  { id:'juice',      img:'images/services_juice.jpg',      n: mkName('Сок','Sharbat','Juice','Шарбат'), desc: mkName('Натуральные соки с ярким вкусом','Yorqin ta’mli tabiiy sharbatlar','Natural juices with rich taste','Шарбатҳои табиӣ бо таъми бой') }
+  {
+    id:'water',
+    img:'images/services_water.jpg',
+    n: mkName('Минеральная вода','Mineral suv','Mineral water','Оби минералӣ'),
+    desc: mkName('Освежающая минеральная вода на каждый день','Har kun uchun tetiklashtiruvchi mineral suv','Refreshing mineral water for every day','Оби минералии тароватбахш барои ҳар рӯз'),
+    items:[
+      {id:'water1', n:mkName('Montella 0.5L','Montella 0.5L','Montella 0.5L','Montella 0.5L'), price:3000},
+      {id:'water2', n:mkName('Montella 0.7L','Montella 0.7L','Montella 0.7L','Montella 0.7L'), price:5000},
+      {id:'water3', n:mkName('Montella 1L','Montella 1L','Montella 1L','Montella 1L'), price:7000},
+      {id:'water4', n:mkName('Montella Sweet — лимон и мята 0.5L','Montella Sweet — limon va yalpiz 0.5L','Montella Sweet — lemon and mint 0.5L','Montella Sweet — лимӯ ва наъно 0.5L'), price:3000},
+      {id:'water5', n:mkName('Montella Sweet — лимон и мята 0.7L','Montella Sweet — limon va yalpiz 0.7L','Montella Sweet — lemon and mint 0.7L','Montella Sweet — лимӯ ва наъно 0.7L'), price:5000},
+      {id:'water6', n:mkName('Montella Sweet — лимон и мята 1L','Montella Sweet — limon va yalpiz 1L','Montella Sweet — lemon and mint 1L','Montella Sweet — лимӯ ва наъно 1L'), price:7000}
+    ]
+  },
+  {
+    id:'energy',
+    img:'images/services_energy.jpg',
+    n: mkName('Энергетические напитки','Energetik ichimliklar','Energy drinks','Нӯшокиҳои энергетикӣ'),
+    desc: mkName('Энергетические напитки для бодрости и активности','Tetiklik va faollik uchun energetik ichimliklar','Energy drinks for power and activity','Нӯшокиҳои энергетикӣ барои нерӯ ва фаъолият'),
+    items:[
+      {id:'energy1', n:mkName('Энергетический напиток 18+ 0.25L','Energetik ichimlik 18+ 0.25L','Energy drink 18+ 0.25L','Нӯшокии энергетикӣ 18+ 0.25L'), price:7500},
+      {id:'energy2', n:mkName('Энергетический напиток 18+ 0.33L','Energetik ichimlik 18+ 0.33L','Energy drink 18+ 0.33L','Нӯшокии энергетикӣ 18+ 0.33L'), price:8330},
+      {id:'energy3', n:mkName('Энергетический напиток 18+ 0.45L','Energetik ichimlik 18+ 0.45L','Energy drink 18+ 0.45L','Нӯшокии энергетикӣ 18+ 0.45L'), price:10000},
+      {id:'energy4', n:mkName('Энергетический напиток 18+ 0.45L Карамель','Energetik ichimlik 18+ 0.45L Karamel','Energy drink 18+ 0.45L Caramel','Нӯшокии энергетикӣ 18+ 0.45L Карамел'), price:10000},
+      {id:'energy5', n:mkName('Энергетический напиток 18+ 0.45L Кактус','Energetik ichimlik 18+ 0.45L Kaktus','Energy drink 18+ 0.45L Cactus','Нӯшокии энергетикӣ 18+ 0.45L Кактус'), price:10000}
+    ]
+  },
+  {
+    id:'tea',
+    img:'images/services_tea.jpg',
+    n: mkName('Чай','Choy','Tea','Чой'),
+    desc: mkName('Классический и ароматный чай','An’anaviy va xushbo‘y choy','Classic and aromatic tea','Чои классикӣ ва хушбӯй'),
+    items:[
+      {id:'tea1', n:mkName('Чай Айс — лесные ягоды 0.5L','Ays choy — o‘rmon mevalari 0.5L','Ice tea — forest berries 0.5L','Чой Айс — буттамеваи ҷангал 0.5L'), price:4170},
+      {id:'tea2', n:mkName('Чай Айс — лесные ягоды 1L','Ays choy — o‘rmon mevalari 1L','Ice tea — forest berries 1L','Чой Айс — буттамеваи ҷангал 1L'), price:10000},
+      {id:'tea3', n:mkName('Чай Айс — персик (зеленый) 0.5L','Ays choy — shaftoli (yashil) 0.5L','Ice tea — peach (green) 0.5L','Чой Айс — шафтолу (сабз) 0.5L'), price:4170},
+      {id:'tea4', n:mkName('Чай Айс — персик (зеленый) 1L','Ays choy — shaftoli (yashil) 1L','Ice tea — peach (green) 1L','Чой Айс — шафтолу (сабз) 1L'), price:10000},
+      {id:'tea5', n:mkName('Чай Айс — персик (черный) 0.5L','Ays choy — shaftoli (qora) 0.5L','Ice tea — peach (black) 0.5L','Чой Айс — шафтолу (сиёҳ) 0.5L'), price:4170},
+      {id:'tea6', n:mkName('Чай Айс — персик (черный) 1L','Ays choy — shaftoli (qora) 1L','Ice tea — peach (black) 1L','Чой Айс — шафтолу (сиёҳ) 1L'), price:10000},
+      {id:'tea7', n:mkName('Чай Айс — манго и ромашка 0.5L','Ays choy — mango va romashka 0.5L','Ice tea — mango and chamomile 0.5L','Чой Айс — манго ва бобуна 0.5L'), price:4170},
+      {id:'tea8', n:mkName('Чай Айс — манго и ромашка 1L','Ays choy — mango va romashka 1L','Ice tea — mango and chamomile 1L','Чой Айс — манго ва бобуна 1L'), price:10000}
+    ]
+  },
+  {
+    id:'juice',
+    img:'images/services_juice.jpg',
+    n: mkName('Сок','Sharbat','Juice','Шарбат'),
+    desc: mkName('Натуральные соки с ярким вкусом','Yorqin ta’mli tabiiy sharbatlar','Natural juices with rich taste','Шарбатҳои табиӣ бо таъми бой'),
+    items:[
+      {id:'juice1', n:mkName('Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L','Tropic MULTI 0.5L'), price:5833},
+      {id:'juice2', n:mkName('Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L','Tropic B & S MIX 0.5L'), price:5833},
+      {id:'juice3', n:mkName('Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L','Tropic BANAN 0.5L'), price:5833},
+      {id:'juice4', n:mkName('Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L','Tropic KIWI 0.5L'), price:5833},
+      {id:'juice5', n:mkName('Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L','Tropic MANGO 0.5L'), price:5833}
+    ]
+  }
 ];
 
 const ITEM_INDEX = {};
@@ -917,18 +1033,25 @@ SERVICES.forEach(it => ITEM_INDEX[it.id]=it);
 
 const POPULAR = ['water','energy','tea','juice'].filter(id=>ITEM_INDEX[id]);
 
+const CART = {};
 let lang='ru';
 
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function nameOf(id){
+function nameOfCategory(id){
   const it = ITEM_INDEX[id];
   if(!it) return id;
   return (it.n && (it.n[lang] || it.n.ru)) ? (it.n[lang] || it.n.ru) : id;
 }
-function descOf(id){
+function descOfCategory(id){
   const it = ITEM_INDEX[id];
   if(!it) return '—';
   return (it.desc && (it.desc[lang] || it.desc.ru)) ? (it.desc[lang] || it.desc.ru) : '—';
+}
+function itemName(item){
+  return (item.n && (item.n[lang] || item.n.ru)) ? (item.n[lang] || item.n.ru) : '';
+}
+function formatPrice(v){
+  return Number(v).toLocaleString('ru-RU') + ' сум';
 }
 
 function isSearchOpen(){ return document.getElementById('searchWrap').style.display === 'flex'; }
@@ -950,66 +1073,96 @@ function closeSearch(){
   renderProducts();
 }
 function clearSearch(){ closeSearch(); }
-function onSearchKey(e){ if(e.key==='Enter') closeSearch(); }
+function onSearchKey(e){ if(e.key==='Enter') searchProducts(); }
 
-function matchesQuery(it,q){
-  if(!q) return true;
-  const all=[
-    it.n?.ru,it.n?.uz,it.n?.en,it.n?.tj,
-    it.desc?.ru,it.desc?.uz,it.desc?.en,it.desc?.tj,
-    String(it.id||'')
-  ].filter(Boolean).join(' ').toLowerCase();
-  return all.includes(q);
+function openTopMenu(){ closeSearch(); document.getElementById('menuBackdrop').classList.add('show'); document.getElementById('menuSheet').classList.add('show'); }
+function closeTopMenu(){ document.getElementById('menuBackdrop').classList.remove('show'); document.getElementById('menuSheet').classList.remove('show'); }
+
+function qtyOf(id){ return CART[id] || 0; }
+function setQty(id, val){
+  CART[id] = Math.max(0, val);
+  if(CART[id] === 0) delete CART[id];
+  document.querySelectorAll(`[data-qty="${id}"]`).forEach(el => el.textContent = qtyOf(id));
+}
+function changeQty(id, delta){
+  setQty(id, qtyOf(id) + delta);
 }
 
-function searchProducts(){
-  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+function categoryHTML(cat, filteredItems){
+  return `
+    <div class="category-card">
+      <div class="category-head" onclick="openImage(event,'${cat.id}')" style="cursor:pointer;">
+        <img src="${cat.img}" onerror="this.onerror=null;this.src='images/logo.png'">
+        <div>
+          <div class="category-title">${escapeHtml(nameOfCategory(cat.id))}</div>
+          <div class="category-desc">${escapeHtml(descOfCategory(cat.id))}</div>
+        </div>
+      </div>
+
+      <div class="items-list">
+        ${filteredItems.map(item => `
+          <div class="product-item">
+            <div class="product-top">
+              <div class="product-name">${escapeHtml(itemName(item))}</div>
+              <div class="product-price">${formatPrice(item.price)}</div>
+            </div>
+            <div class="product-bottom">
+              <div class="product-meta">${escapeHtml(nameOfCategory(cat.id))}</div>
+              <div class="qty-box">
+                <button class="qty-btn" type="button" onclick="changeQty('${item.id}', -1)">−</button>
+                <div class="qty-val" data-qty="${item.id}">${qtyOf(item.id)}</div>
+                <button class="qty-btn" type="button" onclick="changeQty('${item.id}', 1)">+</button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderProducts(filterText=''){
   const box=document.getElementById('products');
   box.innerHTML='';
 
-  const list = SERVICES.filter(it => matchesQuery(it,q));
+  const q = (filterText || '').trim().toLowerCase();
 
-  if(!list.length){
+  const visibleCategories = SERVICES.map(cat => {
+    const items = !q ? cat.items : cat.items.filter(item => {
+      const text = [
+        itemName(item),
+        nameOfCategory(cat.id),
+        descOfCategory(cat.id)
+      ].join(' ').toLowerCase();
+      return text.includes(q);
+    });
+    return {cat, items};
+  }).filter(x => x.items.length > 0);
+
+  if(!visibleCategories.length){
     box.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:18px;font-weight:900;opacity:.9;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:18px;color:#E5E7EB;">
       ${UI[lang].nothingFound}
     </div>`;
     return;
   }
-  list.forEach(it=> box.innerHTML += cardHTML(it));
+
+  visibleCategories.forEach(x => {
+    box.innerHTML += categoryHTML(x.cat, x.items);
+  });
 }
 
-function openTopMenu(){ closeSearch(); document.getElementById('menuBackdrop').classList.add('show'); document.getElementById('menuSheet').classList.add('show'); }
-function closeTopMenu(){ document.getElementById('menuBackdrop').classList.remove('show'); document.getElementById('menuSheet').classList.remove('show'); }
-
-function cardHTML(it){
-  const id=it.id;
-  return `
-  <div class="card" onclick="openImage(event,'${id}')">
-    <div class="img">
-      <img src="${it.img}" onerror="this.onerror=null;this.src='images/logo.png'">
-    </div>
-    <div class="item-name">${escapeHtml(nameOf(id))}</div>
-    <div style="margin-top:4px;font-size:13px;font-weight:800;opacity:.75;color:#E5E7EB;">
-      ${escapeHtml(UI[lang].priceFrom)}
-    </div>
-  </div>`;
-}
-
-function renderProducts(){
-  const box=document.getElementById('products');
-  box.innerHTML='';
-  SERVICES.forEach(it => box.innerHTML += cardHTML(it));
+function searchProducts(){
+  const q=(document.getElementById('searchInput').value||'').trim();
+  renderProducts(q);
 }
 
 function popCardHTML(it){
-  const id=it.id;
+  const minPrice = Math.min(...it.items.map(x => x.price));
   return `
-  <div class="pop-card" onclick="openImage(event,'${id}')">
+  <div class="pop-card" onclick="openImage(event,'${it.id}')">
     <div class="pop-img"><img src="${it.img}" onerror="this.onerror=null;this.src='images/logo.png'"></div>
-    <div class="pop-name">${escapeHtml(nameOf(id))}</div>
-    <div style="margin-top:4px;font-size:13px;font-weight:800;opacity:.75;color:#E5E7EB;text-align:center;">
-      ${escapeHtml(UI[lang].priceFrom)}
-    </div>
+    <div class="pop-name">${escapeHtml(nameOfCategory(it.id))}</div>
+    <div class="pop-sub">${UI[lang].fromPrice} ${formatPrice(minPrice)}</div>
   </div>`;
 }
 function renderPopular(){
@@ -1025,13 +1178,13 @@ function openImage(e,id){
   try{e.preventDefault();e.stopPropagation();}catch(_){}
   const it = ITEM_INDEX[id];
 
-  document.getElementById('imgModalTitle').innerText = nameOf(id);
+  document.getElementById('imgModalTitle').innerText = nameOfCategory(id);
   const img=document.getElementById('imgModalImg');
   img.src = it?.img || 'images/logo.png';
   img.onerror=function(){this.onerror=null;this.src='images/logo.png';};
 
-  document.getElementById('specModel').innerText  = nameOf(id) || '—';
-  document.getElementById('specRegion').innerText = descOf(id);
+  document.getElementById('specModel').innerText  = nameOfCategory(id) || '—';
+  document.getElementById('specRegion').innerText = descOfCategory(id);
 
   document.getElementById('imgModal').classList.add('show');
 }
@@ -1112,6 +1265,7 @@ function sendConsultMain(e){
     tg:{id:tg_id,username:tg_username,first_name:tg_first_name},
     phone:'+' + phone,
     text,
+    cart:CART,
     time: new Date().toISOString()
   };
 
