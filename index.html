@@ -1271,8 +1271,20 @@ const PHONE1_TEL = "tel:+998787771771";
 const INSTAGRAM_URL = "https://www.instagram.com/montella.official/";
 const YOUTUBE_URL  = "https://www.youtube.com/@navruzinternationalcorp.4956/shorts";
 const FACEBOOK_URL = "https://www.facebook.com/Montellauz";
-const ABOUT_ADDR = "г. Самарканд, ваш адрес";
-const ABOUT_HOURS = "ПН-ПТ с 09:00-18:00\nСуббота — Выходной\nВоскресенье — Выходной";
+
+const ABOUT_ADDR_BY_LANG = {
+  ru: "г. Самарканд, ваш адрес",
+  uz: "Samarqand shahri, sizning manzilingiz",
+  en: "Samarkand city, your address",
+  tj: "ш. Самарқанд, суроғаи шумо"
+};
+
+const ABOUT_HOURS_BY_LANG = {
+  ru: "ПН-ПТ с 09:00-18:00\nСуббота — Выходной\nВоскресенье — Выходной",
+  uz: "DU-JU 09:00-18:00\nShanba — Dam olish\nYakshanba — Dam olish",
+  en: "MON-FRI 09:00-18:00\nSaturday — Closed\nSunday — Closed",
+  tj: "ДУ-ҶУ 09:00-18:00\nШанбе — Истироҳат\nЯкшанбе — Истироҳат"
+};
 
 function openLink(url){
   try{ Telegram.WebApp.openLink(url); }catch(_){ window.open(url,'_blank'); }
@@ -1325,7 +1337,8 @@ const tg_id = tgUser.id || "";
 const UI = {
   ru:{
     menu:'Меню',
-    callTitle:'Позвонить', callSub: PHONE1_DISPLAY,
+    callTitle:'Позвонить',
+    callSub: PHONE1_DISPLAY,
     instaSub:'Открыть Instagram',
     youtubeSub:'Открыть YouTube',
     facebookSub:'Открыть Facebook',
@@ -1334,10 +1347,13 @@ const UI = {
     certName1:'Сертификат качества 1',
     certName2:'Сертификат качества 2',
     certModalTitle:'Сертификаты качества',
-    reviewTitle:'Оставить отзыв', reviewSub:'Отзывы',
-    aboutTitle:'О нас', aboutSub:'Адрес, телефон, график',
+    reviewTitle:'Оставить отзыв',
+    reviewSub:'Отзывы',
+    aboutTitle:'О нас',
+    aboutSub:'Адрес, телефон, график',
     aboutAddr:'📍 Адрес',
-    aboutPhone:'📞 Телефон', aboutHours:'🕒 График работы',
+    aboutPhone:'📞 Телефон',
+    aboutHours:'🕒 График работы',
     searchResults:'Результаты поиска',
     searchPh:'Поиск товара...',
     welcome:'👋 Добро пожаловать',
@@ -1369,11 +1385,16 @@ const UI = {
     phoneModalSub:'Номер нужен для связи менеджера с вами',
     phoneSave:'Сохранить',
     phoneCancel:'Отмена',
-    phoneSaved:'✅ Номер сохранён'
+    phoneSaved:'✅ Номер сохранён',
+    aboutDesc:'Montella — современная компания.',
+    orderTitle:'🛒 Новый заказ из корзины',
+    orderItemTotal:'Итого товаров',
+    orderSumTotal:'Итоговая сумма'
   },
   uz:{
     menu:'Menyu',
-    callTitle:"Qo'ng'iroq qilish", callSub: PHONE1_DISPLAY,
+    callTitle:"Qo'ng'iroq qilish",
+    callSub: PHONE1_DISPLAY,
     instaSub:"Instagramni ochish",
     youtubeSub:"YouTubeni ochish",
     facebookSub:"Facebookni ochish",
@@ -1382,10 +1403,13 @@ const UI = {
     certName1:'Sifat sertifikati 1',
     certName2:'Sifat sertifikati 2',
     certModalTitle:'Sifat sertifikatlari',
-    reviewTitle:'Fikr qoldirish', reviewSub:'Sharhlar',
-    aboutTitle:'Biz haqimizda', aboutSub:'Manzil, telefon, ish vaqti',
+    reviewTitle:'Fikr qoldirish',
+    reviewSub:'Sharhlar',
+    aboutTitle:'Biz haqimizda',
+    aboutSub:'Manzil, telefon, ish vaqti',
     aboutAddr:'📍 Manzil',
-    aboutPhone:'📞 Telefon', aboutHours:'🕒 Ish vaqti',
+    aboutPhone:'📞 Telefon',
+    aboutHours:'🕒 Ish vaqti',
     searchResults:'Qidiruv natijalari',
     searchPh:'Mahsulot qidirish...',
     welcome:'👋 Xush kelibsiz',
@@ -1417,11 +1441,16 @@ const UI = {
     phoneModalSub:'Menejer siz bilan bog‘lanishi uchun raqam kerak',
     phoneSave:'Saqlash',
     phoneCancel:'Bekor qilish',
-    phoneSaved:'✅ Raqam saqlandi'
+    phoneSaved:'✅ Raqam saqlandi',
+    aboutDesc:'Montella — zamonaviy kompaniya.',
+    orderTitle:'🛒 Savatdan yangi buyurtma',
+    orderItemTotal:'Jami mahsulotlar',
+    orderSumTotal:'Umumiy summa'
   },
   en:{
     menu:'Menu',
-    callTitle:'Call', callSub: PHONE1_DISPLAY,
+    callTitle:'Call',
+    callSub: PHONE1_DISPLAY,
     instaSub:'Open Instagram',
     youtubeSub:'Open YouTube',
     facebookSub:'Open Facebook',
@@ -1430,10 +1459,13 @@ const UI = {
     certName1:'Quality certificate 1',
     certName2:'Quality certificate 2',
     certModalTitle:'Quality certificates',
-    reviewTitle:'Leave a review', reviewSub:'Reviews',
-    aboutTitle:'About us', aboutSub:'Address, phone, hours',
+    reviewTitle:'Leave a review',
+    reviewSub:'Reviews',
+    aboutTitle:'About us',
+    aboutSub:'Address, phone, hours',
     aboutAddr:'📍 Address',
-    aboutPhone:'📞 Phone', aboutHours:'🕒 Working hours',
+    aboutPhone:'📞 Phone',
+    aboutHours:'🕒 Working hours',
     searchResults:'Search results',
     searchPh:'Search product...',
     welcome:'👋 Welcome',
@@ -1465,11 +1497,16 @@ const UI = {
     phoneModalSub:'The manager will use this number to contact you',
     phoneSave:'Save',
     phoneCancel:'Cancel',
-    phoneSaved:'✅ Number saved'
+    phoneSaved:'✅ Number saved',
+    aboutDesc:'Montella — a modern company.',
+    orderTitle:'🛒 New cart order',
+    orderItemTotal:'Total items',
+    orderSumTotal:'Total amount'
   },
   tj:{
     menu:'Меню',
-    callTitle:'Занг задан', callSub: PHONE1_DISPLAY,
+    callTitle:'Занг задан',
+    callSub: PHONE1_DISPLAY,
     instaSub:'Instagram-ро кушоед',
     youtubeSub:'YouTube-ро кушоед',
     facebookSub:'Facebook-ро кушоед',
@@ -1478,10 +1515,13 @@ const UI = {
     certName1:'Сертификати сифат 1',
     certName2:'Сертификати сифат 2',
     certModalTitle:'Сертификатҳои сифат',
-    reviewTitle:'Шарҳ гузоред', reviewSub:'Шарҳҳо',
-    aboutTitle:'Дар бораи мо', aboutSub:'Суроға, телефон, соатҳо',
+    reviewTitle:'Шарҳ гузоред',
+    reviewSub:'Шарҳҳо',
+    aboutTitle:'Дар бораи мо',
+    aboutSub:'Суроға, телефон, соатҳо',
     aboutAddr:'📍 Суроға',
-    aboutPhone:'📞 Телефон', aboutHours:'🕒 Соатҳои кор',
+    aboutPhone:'📞 Телефон',
+    aboutHours:'🕒 Соатҳои кор',
     searchResults:'Натиҷаҳои ҷустуҷӯ',
     searchPh:'Ҷустуҷӯи маҳсулот...',
     welcome:'👋 Хуш омадед',
@@ -1513,7 +1553,11 @@ const UI = {
     phoneModalSub:'Менеҷер барои тамос бо шумо ин рақамро истифода мебарад',
     phoneSave:'Нигоҳ доштан',
     phoneCancel:'Бекор кардан',
-    phoneSaved:'✅ Рақам нигоҳ дошта шуд'
+    phoneSaved:'✅ Рақам нигоҳ дошта шуд',
+    aboutDesc:'Montella — ширкати муосир.',
+    orderTitle:'🛒 Фармоиши нав аз сабад',
+    orderItemTotal:'Ҳамагӣ молҳо',
+    orderSumTotal:'Маблағи умумӣ'
   }
 };
 
@@ -1583,7 +1627,7 @@ SERVICES.forEach(it => ITEM_INDEX[it.id]=it);
 const POPULAR = ['water','energy','tea','juice'].filter(id=>ITEM_INDEX[id]);
 
 const CART = {};
-let lang='ru';
+let lang='uz';
 let currentSheetCategory = null;
 let savedConsultPhone = '';
 
@@ -1603,6 +1647,12 @@ function itemName(item){
 }
 function formatPrice(v){
   return Number(v).toLocaleString('ru-RU') + ' сум';
+}
+function getAboutAddr(){
+  return ABOUT_ADDR_BY_LANG[lang] || ABOUT_ADDR_BY_LANG.ru;
+}
+function getAboutHours(){
+  return ABOUT_HOURS_BY_LANG[lang] || ABOUT_HOURS_BY_LANG.ru;
 }
 
 function isSearchOpen(){ 
@@ -1971,15 +2021,17 @@ function buildOrderMessageText(){
   if(!items.length) return '';
 
   let lines = [];
-  lines.push('🛒 Новый заказ из корзины');
+  lines.push(UI[lang].orderTitle);
   lines.push('');
+
   items.forEach((item, index) => {
     lines.push(`${index + 1}. ${item.name}`);
     lines.push(`   ${item.qty} x ${formatPrice(item.price)} = ${formatPrice(item.total)}`);
   });
+
   lines.push('');
-  lines.push(`Итого товаров: ${stats.count}`);
-  lines.push(`Итоговая сумма: ${formatPrice(stats.sum)}`);
+  lines.push(`${UI[lang].orderItemTotal}: ${stats.count}`);
+  lines.push(`${UI[lang].orderSumTotal}: ${formatPrice(stats.sum)}`);
 
   return lines.join('\n');
 }
@@ -2126,18 +2178,12 @@ function applyUI(){
   setText('aboutAddrLabel', UI[lang].aboutAddr);
   setText('aboutPhoneLabel', UI[lang].aboutPhone);
   setText('aboutHoursLabel', UI[lang].aboutHours);
-  setText('aboutHoursText', ABOUT_HOURS);
-  setText('aboutAddrText', ABOUT_ADDR);
+  setText('aboutHoursText', getAboutHours());
+  setText('aboutAddrText', getAboutAddr());
 
   setHTML(
     'aboutDescText',
-    lang==='ru'
-      ? `Montella — современная компания.<br><br><b>📍 Адрес:</b> ${ABOUT_ADDR}<br><b>🕒 График:</b><br>ПН-ПТ с 09:00-18:00<br>Суббота — Выходной<br>Воскресенье — Выходной`
-      : lang==='uz'
-      ? `Montella — zamonaviy kompaniya.<br><br><b>📍 Manzil:</b> ${ABOUT_ADDR}<br><b>🕒 Ish vaqti:</b><br>Dushanba-Juma 09:00-18:00<br>Shanba — Dam olish<br>Yakshanba — Dam olish`
-      : lang==='tj'
-      ? `Montella — ширкати муосир.<br><br><b>📍 Суроға:</b> ${ABOUT_ADDR}<br><b>🕒 Соатҳои кор:</b><br>Душанбе-Ҷумъа 09:00-18:00<br>Шанбе — Истироҳат<br>Якшанбе — Истироҳат`
-      : `Montella — a modern company.<br><br><b>📍 Address:</b> ${ABOUT_ADDR}<br><b>🕒 Hours:</b><br>Mon-Fri 09:00-18:00<br>Saturday — Closed<br>Sunday — Closed`
+    `${UI[lang].aboutDesc}<br><br><b>${UI[lang].aboutAddr}</b> ${getAboutAddr()}<br><b>${UI[lang].aboutHours}</b><br>${getAboutHours().replace(/\n/g,'<br>')}`
   );
 
   setText('popularTitle', UI[lang].popular);
@@ -2182,9 +2228,8 @@ function setLang(l,btn){
   applyUI();
 }
 
-lang='ru';
 document.querySelectorAll('.langs .btn').forEach(b=>b.classList.remove('active'));
-document.getElementById('langRU')?.classList.add('active');
+document.getElementById('langUZ')?.classList.add('active');
 
 applyUI();
 renderProducts();
