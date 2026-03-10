@@ -315,14 +315,15 @@ body{
 }
 .category-head img{
   width:100%;
-  height:146px;
-  object-fit:contain;
+  height:clamp(128px, 24vw, 170px);
+  object-fit:cover;
   object-position:center;
-  border-radius:32px;
+  border-radius:24px;
   border:1px solid rgba(255,255,255,.12);
   background:rgba(255,255,255,.10);
-  padding:10px;
+  padding:6px;
   flex:0 0 auto;
+  display:block;
 }
 .category-title{
   font-size:18px;
@@ -356,12 +357,23 @@ body{
   cursor:pointer;
 }
 .pop-img{
-  height:126px;border-radius:32px;overflow:hidden;display:flex;align-items:center;justify-content:center;
-  background: rgba(255,255,255,.10);margin-bottom:8px;
+  height:126px;
+  border-radius:24px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(255,255,255,.10);
+  margin-bottom:8px;
   border:1px solid rgba(255,255,255,.10);
 }
 .pop-img img{
-  width:100%;height:100%;object-fit:contain;object-position:center;border-radius:32px;padding:10px;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  border-radius:24px;
+  padding:6px;
 }
 .pop-name{
   font-weight:900;line-height:1.15;
@@ -660,12 +672,12 @@ body{
 .sheet-item-img{
   width:100%;
   height:128px;
-  object-fit:contain;
+  object-fit:cover;
   object-position:center;
   display:block;
   background:rgba(255,255,255,.10);
-  padding:10px;
-  border-radius:30px;
+  padding:6px;
+  border-radius:22px;
 }
 .sheet-item-body{
   padding:12px;
@@ -874,9 +886,14 @@ body{
     grid-template-columns:repeat(2, minmax(0,1fr));
     gap:10px;
   }
+  .category-card{
+    padding:10px;
+    border-radius:20px;
+  }
   .category-head img{
-    height:122px;
-    border-radius:28px;
+    height:clamp(112px, 34vw, 138px);
+    border-radius:20px;
+    padding:4px;
   }
   .category-title{font-size:16px;}
   .category-desc{font-size:12px;}
@@ -889,14 +906,26 @@ body{
     font-size:18px;
     height:56px;
   }
+  .pop-card{
+    min-width:160px;
+    padding:10px;
+    border-radius:20px;
+  }
   .pop-img{
-    border-radius:28px;
+    height:110px;
+    border-radius:20px;
   }
   .pop-img img{
-    border-radius:28px;
+    border-radius:20px;
+    padding:4px;
+  }
+  .sheet-item{
+    border-radius:18px;
   }
   .sheet-item-img{
-    border-radius:26px;
+    height:112px;
+    border-radius:18px;
+    padding:4px;
   }
 }
 @media (max-width:390px){
@@ -920,7 +949,19 @@ body{
   .brand-phone a{font-size:13px;}
   .header-left{padding-right:158px;}
   .category-head img{
-    height:112px;
+    height:108px;
+    border-radius:18px;
+  }
+  .pop-img{
+    height:100px;
+    border-radius:18px;
+  }
+  .pop-img img{
+    border-radius:18px;
+  }
+  .sheet-item-img{
+    height:102px;
+    border-radius:16px;
   }
 }
 </style>
@@ -1173,8 +1214,12 @@ body{
       id="phoneModalInput"
       class="phone-input"
       type="tel"
-      inputmode="tel"
-      autocomplete="tel"
+      inputmode="numeric"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+      name="montella_phone_manual"
       placeholder="+998 (__) ___-__-__"
       oninput="formatPhoneModalInput(this)"
       onkeydown="onPhoneModalKey(event)"
@@ -1809,16 +1854,32 @@ function digitsOnly(v){
 }
 
 function formatPhoneCommon(value){
-  let v = digitsOnly(value);
-  if(v.startsWith('998')) v = v.slice(3);
-  if(v.length > 9) v = v.slice(0, 9);
+  let raw = digitsOnly(value);
 
-  let out = '+998';
-  if(v.length > 0) out += ' (' + v.slice(0,2);
-  if(v.length >= 2) out += ')';
-  if(v.length > 2) out += ' ' + v.slice(2,5);
-  if(v.length > 5) out += '-' + v.slice(5,7);
-  if(v.length > 7) out += '-' + v.slice(7,9);
+  if(!raw) return '';
+
+  if(raw.startsWith('998')){
+    raw = raw.slice(0, 12);
+    let local = raw.slice(3);
+
+    let out = '+998';
+    if(local.length > 0) out += ' (' + local.slice(0,2);
+    if(local.length >= 2) out += ')';
+    if(local.length > 2) out += ' ' + local.slice(2,5);
+    if(local.length > 5) out += '-' + local.slice(5,7);
+    if(local.length > 7) out += '-' + local.slice(7,9);
+
+    return out;
+  }
+
+  raw = raw.slice(0, 9);
+
+  let out = '';
+  if(raw.length > 0) out += '(' + raw.slice(0,2);
+  if(raw.length >= 2) out += ')';
+  if(raw.length > 2) out += ' ' + raw.slice(2,5);
+  if(raw.length > 5) out += '-' + raw.slice(5,7);
+  if(raw.length > 7) out += '-' + raw.slice(7,9);
 
   return out;
 }
@@ -1831,7 +1892,7 @@ function openPhoneModal(){
   const modal = document.getElementById('phoneModal');
   const input = document.getElementById('phoneModalInput');
   if(!modal || !input) return;
-  input.value = savedConsultPhone ? formatPhoneCommon(savedConsultPhone) : '+998';
+  input.value = savedConsultPhone ? formatPhoneCommon(savedConsultPhone) : '';
   modal.classList.add('show');
   setTimeout(()=>{
     input.focus();
