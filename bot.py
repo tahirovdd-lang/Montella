@@ -3,6 +3,7 @@ import logging
 import json
 import os
 import time
+import html
 
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
@@ -121,7 +122,7 @@ async def startapp(message: types.Message):
 async def debug_url(message: types.Message):
     if message.from_user.id != ADMIN_ID:
         return
-    await message.answer(f"WEBAPP_URL = <code>{WEBAPP_URL}</code>")
+    await message.answer(f"WEBAPP_URL = <code>{html.escape(WEBAPP_URL)}</code>")
 
 
 @dp.message(Command("post_shop"))
@@ -147,7 +148,7 @@ async def post_shop(message: types.Message):
             )
     except Exception as e:
         logging.exception("CHANNEL POST ERROR")
-        await message.answer(f"❌ Ошибка отправки в канал: <code>{e}</code>")
+        await message.answer(f"❌ Ошибка отправки в канал: <code>{html.escape(str(e))}</code>")
 
 
 # ====== ВСПОМОГАТЕЛЬНЫЕ ======
@@ -160,7 +161,9 @@ def fmt_sum(n: int) -> str:
 
 
 def tg_label(u: types.User) -> str:
-    return f"@{u.username}" if u.username else u.full_name
+    if u.username:
+        return f"@{u.username}"
+    return u.full_name or "Пользователь"
 
 
 def clean_str(v) -> str:
@@ -179,6 +182,10 @@ def safe_int(v, default=0) -> int:
         return int(float(s))
     except Exception:
         return default
+
+
+def esc(v) -> str:
+    return html.escape(clean_str(v))
 
 
 def parse_cart_items(data: dict) -> list[dict]:
@@ -212,18 +219,24 @@ def build_order_lines(data: dict) -> list[str]:
         if total <= 0 and price > 0:
             total = price * qty
 
+        safe_name = html.escape(name)
+
         if total > 0:
-            lines.append(f"• {name} × {qty} = {fmt_sum(total)} сум")
+            lines.append(f"• {safe_name} × {qty} = {fmt_sum(total)} сум")
         elif price > 0:
-            lines.append(f"• {name} × {qty} = {fmt_sum(price * qty)} сум")
+            lines.append(f"• {safe_name} × {qty} = {fmt_sum(price * qty)} сум")
         else:
-            lines.append(f"• {name} × {qty}")
+            lines.append(f"• {safe_name} × {qty}")
 
     return lines
 
 
 def get_total_from_payload(data: dict) -> int:
     total = safe_int(data.get("total"), 0)
+    if total > 0:
+        return total
+
+    total = safe_int(data.get("total_sum"), 0)
     if total > 0:
         return total
 
@@ -257,15 +270,29 @@ def get_count_from_payload(data: dict) -> int:
     return sum(safe_int(it.get("qty"), 0) for it in items if isinstance(it, dict))
 
 
+def has_cart_items(data: dict) -> bool:
+    items = parse_cart_items(data)
+    if not isinstance(items, list) or not items:
+        return False
+
+    for it in items:
+        if isinstance(it, dict) and safe_int(it.get("qty"), 0) > 0:
+            return True
+    return False
+
+
 def is_consultation_payload(data: dict) -> bool:
+    # Консультация — это сообщение без корзины
     action = clean_str(data.get("action")).lower()
     text = clean_str(data.get("text"))
-    items = parse_cart_items(data)
+
+    if has_cart_items(data):
+        return False
 
     if action in ("consultation", "consult", "message", "support"):
         return True
 
-    if text and not items:
+    if text:
         return True
 
     return False
@@ -273,12 +300,11 @@ def is_consultation_payload(data: dict) -> bool:
 
 def is_order_payload(data: dict) -> bool:
     action = clean_str(data.get("action")).lower()
-    items = parse_cart_items(data)
 
-    if action == "order":
+    if has_cart_items(data):
         return True
 
-    if isinstance(items, list) and len(items) > 0:
+    if action in ("order", "checkout_order", "checkout", "cart_order"):
         return True
 
     return False
@@ -297,26 +323,7 @@ async def webapp_data(message: types.Message):
     logging.info("WEBAPP DATA RAW: %s", raw)
     logging.info("WEBAPP DATA JSON: %s", data)
 
-    if is_consultation_payload(data):
-        text = clean_str(data.get("text"))
-        phone = clean_str(data.get("phone"))
-
-        if not text:
-            return await message.answer("⚠️ Пустое сообщение. Напишите текст обращения.")
-
-        admin_text = (
-            "💬 <b>НОВОЕ ОБРАЩЕНИЕ MONTELLA</b>\n\n"
-            f"📝 <b>Текст:</b> {text}\n"
-        )
-
-        if phone:
-            admin_text += f"📞 <b>Телефон:</b> {phone}\n"
-
-        admin_text += f"\n👤 <b>Telegram:</b> {tg_label(message.from_user)}"
-
-        await bot.send_message(ADMIN_ID, admin_text)
-        return await message.answer("✅ <b>Сообщение отправлено!</b>\nМы скоро ответим.")
-
+    # ====== СНАЧАЛА ПРОВЕРЯЕМ ЗАКАЗ ======
     if is_order_payload(data):
         lines = build_order_lines(data)
         if not lines:
@@ -335,30 +342,63 @@ async def webapp_data(message: types.Message):
 
         admin_text = (
             "🛒 <b>НОВАЯ ЗАЯВКА MONTELLA</b>\n"
-            f"🆔 <b>{order_id}</b>\n\n"
+            f"🆔 <b>{html.escape(order_id)}</b>\n\n"
             + "\n".join(lines) +
             f"\n\n📦 <b>Количество:</b> {total_count}"
             f"\n💰 <b>Сумма:</b> {fmt_sum(total_sum)} сум"
         )
 
         if order_type and order_type != "—":
-            admin_text += f"\n🚚 <b>Тип:</b> {order_type}"
+            admin_text += f"\n🚚 <b>Тип:</b> {html.escape(order_type)}"
         if payment and payment != "—":
-            admin_text += f"\n💳 <b>Оплата:</b> {payment}"
+            admin_text += f"\n💳 <b>Оплата:</b> {html.escape(payment)}"
         if address and address != "—":
-            admin_text += f"\n📍 <b>Адрес:</b> {address}"
+            admin_text += f"\n📍 <b>Адрес:</b> {html.escape(address)}"
         if phone:
-            admin_text += f"\n📞 <b>Телефон:</b> {phone}"
+            admin_text += f"\n📞 <b>Телефон:</b> {html.escape(phone)}"
         if text:
-            admin_text += f"\n💬 <b>Сообщение:</b> {text}"
+            admin_text += f"\n💬 <b>Сообщение:</b> {html.escape(text)}"
 
-        admin_text += f"\n👤 <b>Telegram:</b> {tg_label(message.from_user)}"
+        admin_text += f"\n👤 <b>Telegram:</b> {html.escape(tg_label(message.from_user))}"
 
         if comment:
-            admin_text += f"\n🗒 <b>Комментарий:</b> {comment}"
+            admin_text += f"\n🗒 <b>Комментарий:</b> {html.escape(comment)}"
 
-        await bot.send_message(ADMIN_ID, admin_text)
-        return await message.answer("✅ <b>Заявка отправлена!</b>\nМы скоро свяжемся с вами.")
+        try:
+            await bot.send_message(ADMIN_ID, admin_text)
+            return await message.answer("✅ <b>Заявка отправлена!</b>\nМы скоро свяжемся с вами.")
+        except Exception as e:
+            logging.exception("ORDER SEND ERROR")
+            return await message.answer(
+                f"❌ Ошибка отправки заказа админу:\n<code>{html.escape(str(e))}</code>"
+            )
+
+    # ====== ПОТОМ КОНСУЛЬТАЦИЮ ======
+    if is_consultation_payload(data):
+        text = clean_str(data.get("text"))
+        phone = clean_str(data.get("phone"))
+
+        if not text:
+            return await message.answer("⚠️ Пустое сообщение. Напишите текст обращения.")
+
+        admin_text = (
+            "💬 <b>НОВОЕ ОБРАЩЕНИЕ MONTELLA</b>\n\n"
+            f"📝 <b>Текст:</b> {html.escape(text)}\n"
+        )
+
+        if phone:
+            admin_text += f"📞 <b>Телефон:</b> {html.escape(phone)}\n"
+
+        admin_text += f"\n👤 <b>Telegram:</b> {html.escape(tg_label(message.from_user))}"
+
+        try:
+            await bot.send_message(ADMIN_ID, admin_text)
+            return await message.answer("✅ <b>Сообщение отправлено!</b>\nМы скоро ответим.")
+        except Exception as e:
+            logging.exception("CONSULT SEND ERROR")
+            return await message.answer(
+                f"❌ Ошибка отправки сообщения админу:\n<code>{html.escape(str(e))}</code>"
+            )
 
     await message.answer("⚠️ Данные не распознаны. Откройте приложение и попробуйте снова.")
 
