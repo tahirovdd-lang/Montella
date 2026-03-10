@@ -418,6 +418,45 @@ body{
   color:#E5E7EB;
   margin-top:10px;
 }
+.cart-items{
+  margin-top:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.cart-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(17,24,39,.45);
+}
+.cart-line-left{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.cart-line-name{
+  font-size:13px;
+  font-weight:900;
+  color:#fff;
+  line-height:1.2;
+}
+.cart-line-meta{
+  font-size:11.5px;
+  font-weight:800;
+  color:rgba(229,231,235,.72);
+}
+.cart-line-right{
+  white-space:nowrap;
+  font-size:13px;
+  font-weight:900;
+  color:#fff;
+}
 
 /* popup */
 .popup{
@@ -438,6 +477,112 @@ body{
   padding:26px;border-radius:24px;text-align:center;font-weight:800;border:1px solid rgba(255,255,255,.14);
   box-shadow:0 14px 26px rgba(0,0,0,.60);
   color:#fff;
+}
+
+/* phone modal */
+.phone-modal{
+  position:fixed;
+  inset:0;
+  z-index:3100;
+  background:rgba(0,0,0,.68);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+}
+.phone-modal.show{
+  opacity:1;
+  pointer-events:auto;
+}
+.phone-box{
+  width:min(100%, 560px);
+  background:#0B0F14;
+  border-top-left-radius:24px;
+  border-top-right-radius:24px;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 18px 40px rgba(0,0,0,.70);
+  padding:12px 14px calc(18px + var(--safeB));
+  transform:translateY(24px);
+  transition:.2s;
+}
+.phone-modal.show .phone-box{
+  transform:translateY(0);
+}
+.phone-handle{
+  width:44px;
+  height:5px;
+  border-radius:999px;
+  background:rgba(255,255,255,.18);
+  margin:4px auto 12px;
+}
+.phone-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+.phone-title{
+  font-size:17px;
+  font-weight:900;
+  color:#fff;
+}
+.phone-close{
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:12px;
+  background:transparent;
+  cursor:pointer;
+  font-size:22px;
+  line-height:1;
+  color:rgba(229,231,235,.72);
+}
+.phone-sub{
+  font-size:13px;
+  font-weight:800;
+  color:rgba(229,231,235,.75);
+  line-height:1.35;
+  margin-bottom:12px;
+}
+.phone-input{
+  width:100%;
+  height:54px;
+  padding:0 16px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(17,24,39,.70);
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  outline:none;
+  box-shadow:0 10px 22px rgba(0,0,0,.45);
+}
+.phone-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.phone-btn{
+  flex:1 1 0;
+  height:48px;
+  border:none;
+  border-radius:16px;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+}
+.phone-btn.secondary{
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+.phone-btn.primary{
+  background:linear-gradient(180deg, var(--accent), var(--accent2));
+  color:#fff;
+  box-shadow:0 12px 24px rgba(0,0,0,.55);
 }
 
 /* bottom product sheet */
@@ -649,13 +794,11 @@ body{
 .consult-head{font-weight:900;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
 .consult-sub{font-weight:800;opacity:.75;color:#E5E7EB;margin-top:-2px;margin-bottom:10px;line-height:1.25;}
 .consult-actions{display:flex;flex-direction:column;gap:10px;align-items:stretch;}
-.consult-input,
-.consult-phone{
+.consult-input{
   width:100%;
   padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.10);
   background:rgba(17,24,39,.55);font-weight:900;outline:none;color:#fff;
 }
-.consult-phone{display:none;}
 .consult-send{
   flex:0 0 auto;
   padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.18);
@@ -665,7 +808,6 @@ body{
 }
 .consult-send:active{transform:scale(.98);}
 
-/* responsive */
 @media (min-width:1024px){
   .products{
     grid-template-columns:repeat(2, minmax(0,1fr));
@@ -710,6 +852,15 @@ body{
   }
   .category-title{font-size:16px;}
   .category-desc{font-size:12px;}
+  .phone-box{
+    width:100%;
+    border-top-left-radius:22px;
+    border-top-right-radius:22px;
+  }
+  .phone-input{
+    font-size:18px;
+    height:56px;
+  }
 }
 @media (max-width:390px){
   .header{
@@ -915,6 +1066,7 @@ body{
       <div class="cart-pill" id="cartSumPill">Сумма: 0 сум</div>
     </div>
     <div class="cart-empty" id="cartEmpty">Выберите товары кнопками + и −</div>
+    <div class="cart-items" id="cartItemsList"></div>
   </div>
 </div>
 
@@ -923,14 +1075,6 @@ body{
     <div class="consult-head" id="consultTitle">💬 Связаться с менеджером</div>
     <div class="consult-sub" id="consultSub">Пример: Хочу заказать доставку</div>
     <div class="consult-actions">
-      <input
-        class="consult-phone"
-        id="consultPhone"
-        type="tel"
-        inputmode="tel"
-        placeholder="+998 (__) ___-__-__"
-        oninput="formatPhoneInput(this)"
-      />
       <input
         class="consult-input"
         id="consultInput"
@@ -972,6 +1116,31 @@ body{
         <img src="images/certificate_2.jpg" onerror="this.onerror=null;this.src='images/logo.jpg'" alt="certificate 2">
         <div class="cert-name" id="certName2">Сертификат качества 2</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="phone-modal" id="phoneModal" onclick="closePhoneModal(event)">
+  <div class="phone-box" onclick="event.stopPropagation()">
+    <div class="phone-handle"></div>
+    <div class="phone-head">
+      <div class="phone-title" id="phoneModalTitle">Введите номер телефона</div>
+      <button class="phone-close" type="button" onclick="closePhoneModal(event)">×</button>
+    </div>
+    <div class="phone-sub" id="phoneModalSub">Номер нужен для связи менеджера с вами</div>
+    <input
+      id="phoneModalInput"
+      class="phone-input"
+      type="tel"
+      inputmode="tel"
+      autocomplete="tel"
+      placeholder="+998 (__) ___-__-__"
+      oninput="formatPhoneModalInput(this)"
+      onkeydown="onPhoneModalKey(event)"
+    />
+    <div class="phone-actions">
+      <button class="phone-btn secondary" type="button" onclick="closePhoneModal(event)" id="phoneCancelBtn">Отмена</button>
+      <button class="phone-btn primary" type="button" onclick="savePhoneFromModal()" id="phoneSaveBtn">Сохранить</button>
     </div>
   </div>
 </div>
@@ -1097,8 +1266,15 @@ const UI = {
     cartCount:'Товаров',
     cartSum:'Сумма',
     cartEmpty:'Выберите товары кнопками + и −',
+    cartSelected:'Выбранные товары',
+    qtyShort:'шт',
     managerHeader:'Связаться',
-    fromPrice:'от'
+    fromPrice:'от',
+    phoneModalTitle:'Введите номер телефона',
+    phoneModalSub:'Номер нужен для связи менеджера с вами',
+    phoneSave:'Сохранить',
+    phoneCancel:'Отмена',
+    phoneSaved:'✅ Номер сохранён'
   },
   uz:{
     menu:'Menyu',
@@ -1135,8 +1311,15 @@ const UI = {
     cartCount:'Tovarlar',
     cartSum:'Jami',
     cartEmpty:'Tovarlarni + va − tugmalari bilan tanlang',
+    cartSelected:'Tanlangan mahsulotlar',
+    qtyShort:'dona',
     managerHeader:'Bog‘lanish',
-    fromPrice:'dan'
+    fromPrice:'dan',
+    phoneModalTitle:'Telefon raqamini kiriting',
+    phoneModalSub:'Menejer siz bilan bog‘lanishi uchun raqam kerak',
+    phoneSave:'Saqlash',
+    phoneCancel:'Bekor qilish',
+    phoneSaved:'✅ Raqam saqlandi'
   },
   en:{
     menu:'Menu',
@@ -1173,8 +1356,15 @@ const UI = {
     cartCount:'Items',
     cartSum:'Total',
     cartEmpty:'Choose products with + and − buttons',
+    cartSelected:'Selected items',
+    qtyShort:'pcs',
     managerHeader:'Contact',
-    fromPrice:'from'
+    fromPrice:'from',
+    phoneModalTitle:'Enter phone number',
+    phoneModalSub:'The manager will use this number to contact you',
+    phoneSave:'Save',
+    phoneCancel:'Cancel',
+    phoneSaved:'✅ Number saved'
   },
   tj:{
     menu:'Меню',
@@ -1211,8 +1401,15 @@ const UI = {
     cartCount:'Молҳо',
     cartSum:'Ҷамъ',
     cartEmpty:'Молҳоро бо тугмаҳои + ва − интихоб кунед',
+    cartSelected:'Молҳои интихобшуда',
+    qtyShort:'дона',
     managerHeader:'Тамос',
-    fromPrice:'аз'
+    fromPrice:'аз',
+    phoneModalTitle:'Рақами телефонро ворид кунед',
+    phoneModalSub:'Менеҷер барои тамос бо шумо ин рақамро истифода мебарад',
+    phoneSave:'Нигоҳ доштан',
+    phoneCancel:'Бекор кардан',
+    phoneSaved:'✅ Рақам нигоҳ дошта шуд'
   }
 };
 
@@ -1284,6 +1481,7 @@ const POPULAR = ['water','energy','tea','juice'].filter(id=>ITEM_INDEX[id]);
 const CART = {};
 let lang='ru';
 let currentSheetCategory = null;
+let savedConsultPhone = '';
 
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function nameOfCategory(id){
@@ -1371,6 +1569,42 @@ function getCartStats(){
   });
   return {count, sum};
 }
+function getCartSelectedItems(){
+  const items = [];
+  SERVICES.forEach(cat=>{
+    cat.items.forEach(item=>{
+      const q = qtyOf(item.id);
+      if(q > 0){
+        items.push({
+          id:item.id,
+          name:itemName(item),
+          qty:q,
+          price:item.price,
+          total:q * item.price
+        });
+      }
+    });
+  });
+  return items;
+}
+function renderCartItems(){
+  const box = document.getElementById('cartItemsList');
+  if(!box) return;
+  const items = getCartSelectedItems();
+  if(!items.length){
+    box.innerHTML = '';
+    return;
+  }
+  box.innerHTML = items.map(item => `
+    <div class="cart-line">
+      <div class="cart-line-left">
+        <div class="cart-line-name">${escapeHtml(item.name)}</div>
+        <div class="cart-line-meta">${item.qty} ${escapeHtml(UI[lang].qtyShort)} × ${formatPrice(item.price)}</div>
+      </div>
+      <div class="cart-line-right">${formatPrice(item.total)}</div>
+    </div>
+  `).join('');
+}
 function updateCartSummary(){
   const stats = getCartStats();
   const ct = document.getElementById('cartTotal');
@@ -1380,7 +1614,8 @@ function updateCartSummary(){
   if(ct) ct.textContent = formatPrice(stats.sum);
   if(c1) c1.textContent = `${UI[lang].cartCount}: ${stats.count}`;
   if(c2) c2.textContent = `${UI[lang].cartSum}: ${formatPrice(stats.sum)}`;
-  if(ce) ce.textContent = stats.count ? `${UI[lang].cartCount}: ${stats.count}` : UI[lang].cartEmpty;
+  if(ce) ce.textContent = stats.count ? UI[lang].cartSelected : UI[lang].cartEmpty;
+  renderCartItems();
 }
 
 function categoryHTML(cat, hasMatch){
@@ -1503,22 +1738,17 @@ function showToast(t){
 }
 
 function requestPhoneFirst(){
-  const phoneInput = document.getElementById('consultPhone');
-  if(phoneInput && phoneInput.style.display !== 'block'){
-    phoneInput.style.display = 'block';
-    phoneInput.placeholder = UI[lang].consultPhonePh;
-    setTimeout(()=>phoneInput.focus(), 50);
-    showToast(UI[lang].consultNeedPhone);
-  }
+  const phone = getNormalizedPhone();
+  if(phone) return;
+  openPhoneModal();
 }
 
 function digitsOnly(v){
   return String(v || '').replace(/\D/g,'');
 }
 
-function formatPhoneInput(el){
-  let v = digitsOnly(el.value);
-
+function formatPhoneCommon(value){
+  let v = digitsOnly(value);
   if(v.startsWith('998')) v = v.slice(3);
   if(v.length > 9) v = v.slice(0, 9);
 
@@ -1529,15 +1759,62 @@ function formatPhoneInput(el){
   if(v.length > 5) out += '-' + v.slice(5,7);
   if(v.length > 7) out += '-' + v.slice(7,9);
 
-  el.value = out;
+  return out;
+}
+
+function formatPhoneModalInput(el){
+  el.value = formatPhoneCommon(el.value);
+}
+
+function openPhoneModal(){
+  const modal = document.getElementById('phoneModal');
+  const input = document.getElementById('phoneModalInput');
+  if(!modal || !input) return;
+  input.value = savedConsultPhone ? formatPhoneCommon(savedConsultPhone) : '+998';
+  modal.classList.add('show');
+  setTimeout(()=>{
+    input.focus();
+    try{ input.setSelectionRange(input.value.length, input.value.length); }catch(_){}
+  }, 120);
+}
+
+function closePhoneModal(e){
+  try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
+  document.getElementById('phoneModal')?.classList.remove('show');
+}
+
+function onPhoneModalKey(e){
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    savePhoneFromModal();
+  }
 }
 
 function getNormalizedPhone(){
-  const val = document.getElementById('consultPhone')?.value || '';
-  const digits = digitsOnly(val);
+  const digits = digitsOnly(savedConsultPhone || '');
   if(digits.length === 12 && digits.startsWith('998')) return digits;
   if(digits.length === 9) return '998' + digits;
   return '';
+}
+
+function savePhoneFromModal(){
+  const input = document.getElementById('phoneModalInput');
+  if(!input) return;
+  const raw = input.value || '';
+  const digits = digitsOnly(raw);
+
+  if(!((digits.length === 12 && digits.startsWith('998')) || digits.length === 9)){
+    showToast(UI[lang].consultNeedPhone);
+    input.focus();
+    return;
+  }
+
+  savedConsultPhone = (digits.length === 9 ? '998' + digits : digits);
+  closePhoneModal();
+  showToast(UI[lang].phoneSaved);
+  setTimeout(()=>{
+    document.getElementById('consultInput')?.focus();
+  }, 120);
 }
 
 function buildCartPayload(){
@@ -1566,7 +1843,7 @@ function sendConsultMain(e){
   const cartItems = buildCartPayload();
 
   if(!phone){
-    requestPhoneFirst();
+    openPhoneModal();
     showToast(UI[lang].consultNeedPhone);
     return;
   }
@@ -1661,14 +1938,22 @@ function applyUI(){
   setText('consultSub', UI[lang].consultSub);
   const consultInput = document.getElementById('consultInput');
   if(consultInput) consultInput.placeholder = UI[lang].consultPh;
-  const consultPhone = document.getElementById('consultPhone');
-  if(consultPhone) consultPhone.placeholder = UI[lang].consultPhonePh;
+
   setText('consultBtn', UI[lang].consultBtn);
   setText('consultHint', UI[lang].consultHint);
   setText('brandSlogan', UI[lang].slogan);
   setText('headerManagerText', UI[lang].managerHeader);
   setText('cartTitle', UI[lang].cart);
   setText('searchTitle', UI[lang].searchResults);
+
+  setText('phoneModalTitle', UI[lang].phoneModalTitle);
+  setText('phoneModalSub', UI[lang].phoneModalSub);
+  setText('phoneSaveBtn', UI[lang].phoneSave);
+  setText('phoneCancelBtn', UI[lang].phoneCancel);
+
+  const phoneInput = document.getElementById('phoneModalInput');
+  if(phoneInput) phoneInput.placeholder = UI[lang].consultPhonePh;
+
   const searchInput = document.getElementById('searchInput');
   if(searchInput) searchInput.placeholder = UI[lang].searchPh;
 
