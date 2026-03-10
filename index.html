@@ -183,7 +183,7 @@ body{
   width:84px;
   height:84px;
   object-fit:contain;
-  border-radius:50%;
+  border-radius:28px;
   background:rgba(255,255,255,.10);
   padding:8px;
   border:2px solid rgba(255,255,255,.18);
@@ -318,7 +318,7 @@ body{
   height:146px;
   object-fit:contain;
   object-position:center;
-  border-radius:18px;
+  border-radius:32px;
   border:1px solid rgba(255,255,255,.12);
   background:rgba(255,255,255,.10);
   padding:10px;
@@ -356,12 +356,12 @@ body{
   cursor:pointer;
 }
 .pop-img{
-  height:126px;border-radius:20px;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  height:126px;border-radius:32px;overflow:hidden;display:flex;align-items:center;justify-content:center;
   background: rgba(255,255,255,.10);margin-bottom:8px;
   border:1px solid rgba(255,255,255,.10);
 }
 .pop-img img{
-  width:100%;height:100%;object-fit:contain;object-position:center;border-radius:20px;padding:10px;
+  width:100%;height:100%;object-fit:contain;object-position:center;border-radius:32px;padding:10px;
 }
 .pop-name{
   font-weight:900;line-height:1.15;
@@ -665,6 +665,7 @@ body{
   display:block;
   background:rgba(255,255,255,.10);
   padding:10px;
+  border-radius:30px;
 }
 .sheet-item-body{
   padding:12px;
@@ -854,6 +855,7 @@ body{
     width:68px;
     height:68px;
     right:46px;
+    border-radius:24px;
   }
   .header-manager-btn{
     right:124px;
@@ -874,6 +876,7 @@ body{
   }
   .category-head img{
     height:122px;
+    border-radius:28px;
   }
   .category-title{font-size:16px;}
   .category-desc{font-size:12px;}
@@ -886,6 +889,15 @@ body{
     font-size:18px;
     height:56px;
   }
+  .pop-img{
+    border-radius:28px;
+  }
+  .pop-img img{
+    border-radius:28px;
+  }
+  .sheet-item-img{
+    border-radius:26px;
+  }
 }
 @media (max-width:390px){
   .header{
@@ -895,6 +907,7 @@ body{
     width:62px;
     height:62px;
     right:44px;
+    border-radius:22px;
   }
   .header-manager-btn{
     right:114px;
@@ -1884,6 +1897,26 @@ function buildCartPayload(){
   return items;
 }
 
+function buildOrderMessageText(){
+  const items = buildCartPayload();
+  const stats = getCartStats();
+
+  if(!items.length) return '';
+
+  let lines = [];
+  lines.push('🛒 Новый заказ из корзины');
+  lines.push('');
+  items.forEach((item, index) => {
+    lines.push(`${index + 1}. ${item.name}`);
+    lines.push(`   ${item.qty} x ${formatPrice(item.price)} = ${formatPrice(item.total)}`);
+  });
+  lines.push('');
+  lines.push(`Итого товаров: ${stats.count}`);
+  lines.push(`Итоговая сумма: ${formatPrice(stats.sum)}`);
+
+  return lines.join('\n');
+}
+
 function sendConsultMain(e){
   try{e.preventDefault();e.stopPropagation();}catch(_){}
   const text = (document.getElementById('consultInput')?.value || '').trim();
@@ -1942,16 +1975,20 @@ function checkoutOrder(e){
     return;
   }
 
+  const orderText = buildOrderMessageText();
+
   const payload = {
-    action:'checkout_order',
+    action:'consultation',
     to_admin_id: ADMIN_ID,
     brand:'MONTELLA',
     tg:{id:tg_id,username:tg_username,first_name:tg_first_name},
     phone:'+' + phone,
-    cart:cartItems,
-    cart_stats:stats,
-    total_sum:stats.sum,
+    text: orderText,
+    cart: cartItems,
+    cart_stats: stats,
+    total_sum: stats.sum,
     currency:'UZS',
+    order_from_cart: true,
     time:new Date().toISOString()
   };
 
@@ -1961,7 +1998,8 @@ function checkoutOrder(e){
     showToast(UI[lang].checkoutSent);
 
     Object.keys(CART).forEach(k => delete CART[k]);
-    document.getElementById('consultInput').value = '';
+    const consultInput = document.getElementById('consultInput');
+    if(consultInput) consultInput.value = '';
     syncAllQtyViews();
     updateCartSummary();
     closeCategorySheet();
