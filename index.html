@@ -182,10 +182,10 @@ body{
   transform:translateY(-50%);
   width:84px;
   height:84px;
-  object-fit:cover;
+  object-fit:contain;
   border-radius:50%;
-  background:rgba(255,255,255,.08);
-  padding:4px;
+  background:rgba(255,255,255,.10);
+  padding:8px;
   border:2px solid rgba(255,255,255,.18);
   box-shadow:0 14px 30px rgba(0,0,0,.55);
 }
@@ -316,10 +316,12 @@ body{
 .category-head img{
   width:100%;
   height:146px;
-  object-fit:cover;
+  object-fit:contain;
+  object-position:center;
   border-radius:18px;
   border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.06);
+  background:rgba(255,255,255,.10);
+  padding:10px;
   flex:0 0 auto;
 }
 .category-title{
@@ -355,10 +357,11 @@ body{
 }
 .pop-img{
   height:126px;border-radius:20px;overflow:hidden;display:flex;align-items:center;justify-content:center;
-  background: transparent;margin-bottom:8px;
+  background: rgba(255,255,255,.10);margin-bottom:8px;
+  border:1px solid rgba(255,255,255,.10);
 }
 .pop-img img{
-  width:100%;height:100%;object-fit:cover;border-radius:20px;
+  width:100%;height:100%;object-fit:contain;object-position:center;border-radius:20px;padding:10px;
 }
 .pop-name{
   font-weight:900;line-height:1.15;
@@ -456,6 +459,25 @@ body{
   font-size:13px;
   font-weight:900;
   color:#fff;
+}
+.cart-checkout{
+  margin-top:14px;
+  width:100%;
+  border:none;
+  border-radius:18px;
+  padding:14px 16px;
+  background:linear-gradient(180deg, var(--accent), var(--accent2));
+  color:#fff;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 12px 24px rgba(0,0,0,.55);
+}
+.cart-checkout:active{transform:scale(.98);}
+.cart-checkout:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
 }
 
 /* popup */
@@ -638,8 +660,11 @@ body{
 .sheet-item-img{
   width:100%;
   height:128px;
-  object-fit:cover;
+  object-fit:contain;
+  object-position:center;
   display:block;
+  background:rgba(255,255,255,.10);
+  padding:10px;
 }
 .sheet-item-body{
   padding:12px;
@@ -1067,6 +1092,9 @@ body{
     </div>
     <div class="cart-empty" id="cartEmpty">Выберите товары кнопками + и −</div>
     <div class="cart-items" id="cartItemsList"></div>
+    <button class="cart-checkout" id="checkoutBtn" onclick="checkoutOrder(event)" disabled>
+      Оформить заказ — 0 сум
+    </button>
   </div>
 </div>
 
@@ -1268,6 +1296,9 @@ const UI = {
     cartEmpty:'Выберите товары кнопками + и −',
     cartSelected:'Выбранные товары',
     qtyShort:'шт',
+    checkout:'Оформить заказ',
+    checkoutSent:'✅ Заказ отправлен менеджеру',
+    checkoutNeedCart:'Добавьте товары в корзину',
     managerHeader:'Связаться',
     fromPrice:'от',
     phoneModalTitle:'Введите номер телефона',
@@ -1313,6 +1344,9 @@ const UI = {
     cartEmpty:'Tovarlarni + va − tugmalari bilan tanlang',
     cartSelected:'Tanlangan mahsulotlar',
     qtyShort:'dona',
+    checkout:'Buyurtma berish',
+    checkoutSent:'✅ Buyurtma menejerga yuborildi',
+    checkoutNeedCart:'Savatga mahsulot qo‘shing',
     managerHeader:'Bog‘lanish',
     fromPrice:'dan',
     phoneModalTitle:'Telefon raqamini kiriting',
@@ -1358,6 +1392,9 @@ const UI = {
     cartEmpty:'Choose products with + and − buttons',
     cartSelected:'Selected items',
     qtyShort:'pcs',
+    checkout:'Checkout',
+    checkoutSent:'✅ Order sent to manager',
+    checkoutNeedCart:'Add products to cart',
     managerHeader:'Contact',
     fromPrice:'from',
     phoneModalTitle:'Enter phone number',
@@ -1403,6 +1440,9 @@ const UI = {
     cartEmpty:'Молҳоро бо тугмаҳои + ва − интихоб кунед',
     cartSelected:'Молҳои интихобшуда',
     qtyShort:'дона',
+    checkout:'Фармоиш додан',
+    checkoutSent:'✅ Фармоиш ба менеҷер фиристода шуд',
+    checkoutNeedCart:'Ба сабад мол илова кунед',
     managerHeader:'Тамос',
     fromPrice:'аз',
     phoneModalTitle:'Рақами телефонро ворид кунед',
@@ -1611,10 +1651,18 @@ function updateCartSummary(){
   const c1 = document.getElementById('cartCountPill');
   const c2 = document.getElementById('cartSumPill');
   const ce = document.getElementById('cartEmpty');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+
   if(ct) ct.textContent = formatPrice(stats.sum);
   if(c1) c1.textContent = `${UI[lang].cartCount}: ${stats.count}`;
   if(c2) c2.textContent = `${UI[lang].cartSum}: ${formatPrice(stats.sum)}`;
   if(ce) ce.textContent = stats.count ? UI[lang].cartSelected : UI[lang].cartEmpty;
+
+  if(checkoutBtn){
+    checkoutBtn.textContent = `${UI[lang].checkout} — ${formatPrice(stats.sum)}`;
+    checkoutBtn.disabled = stats.count === 0;
+  }
+
   renderCartItems();
 }
 
@@ -1876,6 +1924,60 @@ function sendConsultMain(e){
   }
 }
 
+function checkoutOrder(e){
+  try{e?.preventDefault?.();e?.stopPropagation?.();}catch(_){}
+
+  const stats = getCartStats();
+  const phone = getNormalizedPhone();
+  const cartItems = buildCartPayload();
+
+  if(!stats.count){
+    showToast(UI[lang].checkoutNeedCart);
+    return;
+  }
+
+  if(!phone){
+    openPhoneModal();
+    showToast(UI[lang].consultNeedPhone);
+    return;
+  }
+
+  const payload = {
+    action:'checkout_order',
+    to_admin_id: ADMIN_ID,
+    brand:'MONTELLA',
+    tg:{id:tg_id,username:tg_username,first_name:tg_first_name},
+    phone:'+' + phone,
+    cart:cartItems,
+    cart_stats:stats,
+    total_sum:stats.sum,
+    currency:'UZS',
+    time:new Date().toISOString()
+  };
+
+  try{
+    Telegram.WebApp.HapticFeedback?.notificationOccurred?.('success');
+    Telegram.WebApp.sendData(JSON.stringify(payload));
+    showToast(UI[lang].checkoutSent);
+
+    Object.keys(CART).forEach(k => delete CART[k]);
+    document.getElementById('consultInput').value = '';
+    syncAllQtyViews();
+    updateCartSummary();
+    closeCategorySheet();
+  }catch(_){
+    showToast("✅");
+  }
+}
+
+function syncAllQtyViews(){
+  SERVICES.forEach(cat=>{
+    cat.items.forEach(item=>{
+      syncQtyViews(item.id);
+    });
+  });
+}
+
 function renderWelcome(){
   const el = document.getElementById('welcomeLine');
   if(!el) return;
@@ -1936,6 +2038,7 @@ function applyUI(){
   setText('popularTitle', UI[lang].popular);
   setText('consultTitle', UI[lang].consult);
   setText('consultSub', UI[lang].consultSub);
+
   const consultInput = document.getElementById('consultInput');
   if(consultInput) consultInput.placeholder = UI[lang].consultPh;
 
