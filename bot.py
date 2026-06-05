@@ -1,13 +1,22 @@
 import asyncio
 import logging
+import json
 import os
+import time
 import html
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
 from aiogram.client.default import DefaultBotProperties
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
-from aiogram.exceptions import TelegramConflictError, TelegramNetworkError
+from aiogram.types import (
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+    WebAppInfo,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+)
+from aiogram.exceptions import TelegramConflictError, TelegramNetworkError, TelegramRetryAfter
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,10 +25,13 @@ logging.basicConfig(
 
 BOT_TOKEN = os.getenv("BOT_TOKEN") or os.getenv("API_TOKEN")
 if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN/API_TOKEN не найден")
+    raise RuntimeError("❌ BOT_TOKEN/API_TOKEN не найден.")
 
 ADMIN_ID = int(os.getenv("ADMIN_ID", "6013591658"))
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://tahirovdd-lang.github.io/Montella/").strip()
+CHANNEL_ID = os.getenv("CHANNEL_ID", "@MONTELLA_APP").strip()
+
+DEFAULT_WEBAPP = "https://tahirovdd-lang.github.io/Montella/"
+WEBAPP_URL = os.getenv("WEBAPP_URL", DEFAULT_WEBAPP).strip()
 
 if WEBAPP_URL.endswith("/"):
     WEBAPP_URL += "index.html"
@@ -31,38 +43,212 @@ bot = Bot(
 
 dp = Dispatcher()
 
+BTN_OPEN = "Ochish • Открыть • Open"
+_last_start = {}
+
+
+def allow_start(user_id: int, ttl: float = 1.0) -> bool:
+    now = time.time()
+    prev = _last_start.get(user_id, 0)
+    if now - prev < ttl:
+        return False
+    _last_start[user_id] = now
+    return True
+
 
 def main_keyboard():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Открыть приложение", web_app=WebAppInfo(url=WEBAPP_URL))]
+            [KeyboardButton(text=BTN_OPEN, web_app=WebAppInfo(url=WEBAPP_URL))]
         ],
-        resize_keyboard=True
+        resize_keyboard=True,
+        one_time_keyboard=False
     )
+
+
+def channel_keyboard():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=BTN_OPEN, url=WEBAPP_URL)]
+        ]
+    )
+
+
+def welcome_text():
+    return (
+        "🇷🇺 Добро пожаловать в <b>MONTELLA</b> 💧\n"
+        "Откройте приложение — нажмите кнопку ниже.\n\n"
+        "🇺🇿 <b>MONTELLA</b> 💧 ga xush kelibsiz!\n"
+        "Ilovani ochish uchun pastdagi tugmani bosing.\n\n"
+        "🇬🇧 Welcome to <b>MONTELLA</b> 💧\n"
+        "Tap the button below to launch the app."
+    )
+
+
+def clean_str(v):
+    return "" if v is None else str(v).strip()
+
+
+def safe_int(v, default=0):
+    try:
+        if v is None or isinstance(v, bool):
+            return default
+        if isinstance(v, (int, float)):
+            return int(v)
+        s = str(v).strip().replace(" ", "")
+        if not s:
+            return default
+        return int(float(s))
+    except Exception:
+        return default
+
+
+def fmt_sum(n):
+    try:
+        n = int(n)
+    except Exception:
+        n = 0
+    return f"{n:,}".replace(",", " ")
+
+
+def tg_label(user: types.User):
+    if user.username:
+        return f"@{user.username}"
+    return user.full_name or "Пользователь"
+
+
+def parse_cart_items(data):
+    if isinstance(data.get("items"), list):
+        return data.get("items")
+    if isinstance(data.get("cart"), list):
+        return data.get("cart")
+    return []
+
+
+def build_order_lines(data):
+    items = parse_cart_items(data)
+    lines = []
+
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+
+        name = clean_str(item.get("name")) or clean_str(item.get("id")) or "—"
+        qty = safe_int(item.get("qty"), 0)
+
+        if qty <= 0:
+            continue
+
+        price = safe_int(item.get("price"), 0)
+        total = safe_int(item.get("total"), 0)
+
+        if total <= 0 and price > 0:
+            total = price * qty
+
+        if total > 0:
+            lines.append(f"• {html.escape(name)} × {qty} = {fmt_sum(total)} сум")
+        else:
+            lines.append(f"• {html.escape(name)} × {qty}")
+
+    return lines
+
+
+def get_total(data):
+    for key in ("total", "total_sum"):
+        total = safe_int(data.get(key), 0)
+        if total > 0:
+            return total
+
+    cart_stats = data.get("cart_stats")
+    if isinstance(cart_stats, dict):
+        total = safe_int(cart_stats.get("sum"), 0)
+        if total > 0:
+            return total
+
+    total = 0
+    for item in parse_cart_items(data):
+        if isinstance(item, dict):
+            item_total = safe_int(item.get("total"), 0)
+            if item_total > 0:
+                total += item_total
+            else:
+                total += safe_int(item.get("price"), 0) * safe_int(item.get("qty"), 0)
+
+    return total
+
+
+def get_count(data):
+    cart_stats = data.get("cart_stats")
+    if isinstance(cart_stats, dict):
+        count = safe_int(cart_stats.get("count"), 0)
+        if count > 0:
+            return count
+
+    return sum(
+        safe_int(item.get("qty"), 0)
+        for item in parse_cart_items(data)
+        if isinstance(item, dict)
+    )
+
+
+def has_cart_items(data):
+    for item in parse_cart_items(data):
+        if isinstance(item, dict) and safe_int(item.get("qty"), 0) > 0:
+            return True
+    return False
+
+
+def is_order_payload(data):
+    action = clean_str(data.get("action")).lower()
+    return has_cart_items(data) or action in (
+        "order",
+        "checkout",
+        "checkout_order",
+        "cart_order"
+    )
+
+
+def is_consultation_payload(data):
+    action = clean_str(data.get("action")).lower()
+    text = clean_str(data.get("text"))
+
+    if has_cart_items(data):
+        return False
+
+    return action in ("consultation", "consult", "message", "support") or bool(text)
 
 
 @dp.message(CommandStart())
 async def start(message: types.Message):
-    logging.info("START received from %s", message.from_user.id)
+    try:
+        user_id = message.from_user.id if message.from_user else 0
 
-    await message.answer(
-        "✅ Бот работает.\n\n"
-        "Нажмите кнопку ниже, чтобы открыть приложение.",
-        reply_markup=main_keyboard()
-    )
+        if not allow_start(user_id):
+            return
+
+        logging.info("START from user_id=%s", user_id)
+
+        await message.answer(
+            welcome_text(),
+            reply_markup=main_keyboard()
+        )
+
+    except Exception:
+        logging.exception("START ERROR")
 
 
 @dp.message(Command("ping"))
 async def ping(message: types.Message):
-    await message.answer("✅ PING OK")
+    await message.answer("✅ Бот работает.")
 
 
 @dp.message(Command("debug"))
 async def debug(message: types.Message):
-    if message.from_user.id != ADMIN_ID:
+    if not message.from_user or message.from_user.id != ADMIN_ID:
         return
 
     me = await bot.get_me()
+
     await message.answer(
         f"✅ Бот запущен\n"
         f"Username: @{html.escape(me.username or '')}\n"
@@ -71,9 +257,167 @@ async def debug(message: types.Message):
     )
 
 
-async def startup_notify():
+@dp.message(Command("post_shop"))
+async def post_shop(message: types.Message):
+    if not message.from_user or message.from_user.id != ADMIN_ID:
+        return await message.answer("⛔️ Нет доступа.")
+
+    text = (
+        "🇷🇺 <b>MONTELLA</b> 💧\n"
+        "Нажмите кнопку ниже, чтобы открыть приложение.\n\n"
+        "🇺🇿 <b>MONTELLA</b> 💧\n"
+        "Pastdagi tugma orqali ilovani oching.\n\n"
+        "🇬🇧 <b>MONTELLA</b> 💧\n"
+        "Tap the button below to open the app."
+    )
+
+    try:
+        sent = await bot.send_message(
+            CHANNEL_ID,
+            text,
+            reply_markup=channel_keyboard()
+        )
+
+        try:
+            await bot.pin_chat_message(
+                CHANNEL_ID,
+                sent.message_id,
+                disable_notification=True
+            )
+            await message.answer("✅ Пост отправлен в канал и закреплён.")
+        except Exception:
+            logging.exception("PIN ERROR")
+            await message.answer(
+                "✅ Пост отправлен в канал.\n"
+                "⚠️ Не удалось закрепить — дай боту право закреплять сообщения."
+            )
+
+    except Exception as e:
+        logging.exception("CHANNEL POST ERROR")
+        await message.answer(
+            f"❌ Ошибка отправки в канал:\n<code>{html.escape(str(e))}</code>"
+        )
+
+
+@dp.message(F.web_app_data)
+async def webapp_data(message: types.Message):
+    raw = message.web_app_data.data
+
+    try:
+        data = json.loads(raw) if raw else {}
+    except Exception:
+        logging.exception("JSON PARSE ERROR")
+        data = {}
+
+    logging.info("WEBAPP DATA RAW: %s", raw)
+    logging.info("WEBAPP DATA JSON: %s", data)
+
+    if is_order_payload(data):
+        lines = build_order_lines(data)
+
+        if not lines:
+            return await message.answer("⚠️ Корзина пустая. Добавьте позиции и повторите.")
+
+        total_sum = get_total(data)
+        total_count = get_count(data)
+
+        payment = clean_str(data.get("payment")) or "—"
+        order_type = clean_str(data.get("type")) or "—"
+        address = clean_str(data.get("address")) or "—"
+        comment = clean_str(data.get("comment"))
+        order_id = clean_str(data.get("order_id")) or "—"
+        text = clean_str(data.get("text"))
+        phone = clean_str(data.get("phone"))
+
+        admin_text = (
+            "🛒 <b>НОВАЯ ЗАЯВКА MONTELLA</b>\n"
+            f"🆔 <b>{html.escape(order_id)}</b>\n\n"
+            + "\n".join(lines) +
+            f"\n\n📦 <b>Количество:</b> {total_count}"
+            f"\n💰 <b>Сумма:</b> {fmt_sum(total_sum)} сум"
+        )
+
+        if order_type and order_type != "—":
+            admin_text += f"\n🚚 <b>Тип:</b> {html.escape(order_type)}"
+
+        if payment and payment != "—":
+            admin_text += f"\n💳 <b>Оплата:</b> {html.escape(payment)}"
+
+        if address and address != "—":
+            admin_text += f"\n📍 <b>Адрес:</b> {html.escape(address)}"
+
+        if phone:
+            admin_text += f"\n📞 <b>Телефон:</b> {html.escape(phone)}"
+
+        if text:
+            admin_text += f"\n💬 <b>Сообщение:</b> {html.escape(text)}"
+
+        admin_text += f"\n👤 <b>Telegram:</b> {html.escape(tg_label(message.from_user))}"
+
+        if comment:
+            admin_text += f"\n🗒 <b>Комментарий:</b> {html.escape(comment)}"
+
+        try:
+            await bot.send_message(ADMIN_ID, admin_text)
+            return await message.answer(
+                "✅ <b>Заявка отправлена!</b>\nМы скоро свяжемся с вами."
+            )
+        except Exception as e:
+            logging.exception("ORDER SEND ERROR")
+            return await message.answer(
+                f"❌ Ошибка отправки заказа админу:\n<code>{html.escape(str(e))}</code>"
+            )
+
+    if is_consultation_payload(data):
+        text = clean_str(data.get("text"))
+        phone = clean_str(data.get("phone"))
+
+        if not text:
+            return await message.answer("⚠️ Пустое сообщение. Напишите текст обращения.")
+
+        admin_text = (
+            "💬 <b>НОВОЕ ОБРАЩЕНИЕ MONTELLA</b>\n\n"
+            f"📝 <b>Текст:</b> {html.escape(text)}\n"
+        )
+
+        if phone:
+            admin_text += f"📞 <b>Телефон:</b> {html.escape(phone)}\n"
+
+        admin_text += f"\n👤 <b>Telegram:</b> {html.escape(tg_label(message.from_user))}"
+
+        try:
+            await bot.send_message(ADMIN_ID, admin_text)
+            return await message.answer(
+                "✅ <b>Сообщение отправлено!</b>\nМы скоро ответим."
+            )
+        except Exception as e:
+            logging.exception("CONSULT SEND ERROR")
+            return await message.answer(
+                f"❌ Ошибка отправки сообщения админу:\n<code>{html.escape(str(e))}</code>"
+            )
+
+    await message.answer("⚠️ Данные не распознаны. Откройте приложение и попробуйте снова.")
+
+
+@dp.message()
+async def any_message(message: types.Message):
+    text = clean_str(message.text).lower()
+
+    if text in ("старт", "start", "начать", "открыть", "open", "ochish"):
+        return await start(message)
+
+    await message.answer(
+        "Нажмите кнопку ниже, чтобы открыть приложение.",
+        reply_markup=main_keyboard()
+    )
+
+
+async def notify_startup():
     try:
         me = await bot.get_me()
+
+        logging.info("Bot started successfully: @%s id=%s", me.username, me.id)
+
         await bot.send_message(
             ADMIN_ID,
             f"✅ Бот запустился\n"
@@ -81,24 +425,33 @@ async def startup_notify():
             f"ID: <code>{me.id}</code>\n"
             f"WEBAPP_URL: <code>{html.escape(WEBAPP_URL)}</code>"
         )
+
     except Exception:
-        logging.exception("Не удалось отправить сообщение админу при запуске")
+        logging.exception("STARTUP NOTIFY ERROR")
 
 
 async def main():
     while True:
         try:
-            logging.info("Deleting webhook...")
-            await bot.delete_webhook(drop_pending_updates=True)
+            await notify_startup()
 
-            await startup_notify()
-
-            logging.info("Starting polling...")
-            await dp.start_polling(bot)
+            await dp.start_polling(
+                bot,
+                allowed_updates=dp.resolve_used_update_types(),
+                polling_timeout=20
+            )
 
         except TelegramConflictError:
-            logging.error("❌ Запущена вторая копия этого же бота. Останови старый хостинг/контейнер.")
-            await asyncio.sleep(10)
+            logging.error(
+                "❌ Запущена вторая копия этого же бота. "
+                "Останови старый контейнер или старый хостинг."
+            )
+            await asyncio.sleep(15)
+
+        except TelegramRetryAfter as e:
+            wait_time = int(e.retry_after) + 1
+            logging.warning("TelegramRetryAfter. Sleep %s sec", wait_time)
+            await asyncio.sleep(wait_time)
 
         except TelegramNetworkError:
             logging.exception("Ошибка сети Telegram. Перезапуск через 10 секунд.")
