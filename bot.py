@@ -9,28 +9,33 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import (
-    ReplyKeyboardMarkup, KeyboardButton, WebAppInfo,
-    InlineKeyboardMarkup, InlineKeyboardButton
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+    WebAppInfo,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+)
+from aiogram.exceptions import TelegramNetworkError, TelegramRetryAfter
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s"
 )
 
-logging.basicConfig(level=logging.INFO)
-
-# ====== НАСТРОЙКИ ======
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN") or os.getenv("API_TOKEN")
 if not BOT_TOKEN:
-    raise RuntimeError("❌ BOT_TOKEN не найден. Добавь переменную окружения BOT_TOKEN.")
+    raise RuntimeError("❌ BOT_TOKEN/API_TOKEN не найден в переменных хостинга.")
 
 BOT_USERNAME = os.getenv("BOT_USERNAME", "montella_bot").replace("@", "").strip().lower()
 ADMIN_ID = int(os.getenv("ADMIN_ID", "6013591658"))
 CHANNEL_ID = os.getenv("CHANNEL_ID", "@MONTELLA_APP").strip()
 
+DEFAULT_WEBAPP = "https://tahirovdd-lang.github.io/Montella/"
+SKIP_DELETE_WEBHOOK = os.getenv("SKIP_DELETE_WEBHOOK", "1") == "1"
+
 
 def normalize_webapp_url(url: str) -> str:
-    """
-    Делает URL максимально стабильным для Telegram:
-    - если это GitHub Pages папка, добавляет /index.html
-    - сохраняет query ?v=...
-    """
     url = (url or "").strip()
     if not url:
         return url
@@ -49,20 +54,24 @@ def normalize_webapp_url(url: str) -> str:
     return base + q
 
 
-# ✅ ТВОЯ ССЫЛКА
-DEFAULT_WEBAPP = "https://tahirovdd-lang.github.io/Montella/"
 WEBAPP_URL = normalize_webapp_url(os.getenv("WEBAPP_URL", DEFAULT_WEBAPP))
+logging.info("WEBAPP_URL = %s", WEBAPP_URL)
+logging.info("ADMIN_ID = %s", ADMIN_ID)
+logging.info("CHANNEL_ID = %s", CHANNEL_ID)
 
-logging.info(f"WEBAPP_URL (effective) = {WEBAPP_URL}")
+bot = Bot(
+    token=BOT_TOKEN,
+    default=DefaultBotProperties(parse_mode="HTML")
+)
 
-bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
 dp = Dispatcher()
 
-# ====== АНТИ-ДУБЛЬ START ======
 _last_start: dict[int, float] = {}
 
+BTN_OPEN_MULTI = "Ochish • Открыть • Open"
 
-def allow_start(user_id: int, ttl: float = 2.0) -> bool:
+
+def allow_start(user_id: int, ttl: float = 1.0) -> bool:
     now = time.time()
     prev = _last_start.get(user_id, 0.0)
     if now - prev < ttl:
@@ -71,16 +80,14 @@ def allow_start(user_id: int, ttl: float = 2.0) -> bool:
     return True
 
 
-# ====== КНОПКИ ======
-BTN_OPEN_MULTI = "Ochish • Открыть • Open"
-
-
 def kb_webapp_reply() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text=BTN_OPEN_MULTI, web_app=WebAppInfo(url=WEBAPP_URL))]
         ],
-        resize_keyboard=True
+        resize_keyboard=True,
+        one_time_keyboard=False,
+        input_field_placeholder="Откройте приложение"
     )
 
 
@@ -92,66 +99,17 @@ def kb_channel_url() -> InlineKeyboardMarkup:
     )
 
 
-# ====== ТЕКСТ ======
 def welcome_text() -> str:
     return (
         "🇷🇺 Добро пожаловать в <b>MONTELLA</b> 💧\n"
-        "Откройте приложение — нажмите «Открыть» ниже.\n\n"
+        "Откройте приложение — нажмите кнопку ниже.\n\n"
         "🇺🇿 <b>MONTELLA</b> 💧 ga xush kelibsiz!\n"
-        "Ilovani ochish uchun pastdagi «Ochish» tugmasini bosing.\n\n"
+        "Ilovani ochish uchun pastdagi tugmani bosing.\n\n"
         "🇬🇧 Welcome to <b>MONTELLA</b> 💧\n"
-        "Tap “Open” below to launch the app."
+        "Tap the button below to launch the app."
     )
 
 
-@dp.message(CommandStart())
-async def start(message: types.Message):
-    if not allow_start(message.from_user.id):
-        return
-    await message.answer(welcome_text(), reply_markup=kb_webapp_reply())
-
-
-@dp.message(Command("startapp"))
-async def startapp(message: types.Message):
-    if not allow_start(message.from_user.id):
-        return
-    await message.answer(welcome_text(), reply_markup=kb_webapp_reply())
-
-
-@dp.message(Command("debug_url"))
-async def debug_url(message: types.Message):
-    if message.from_user.id != ADMIN_ID:
-        return
-    await message.answer(f"WEBAPP_URL = <code>{html.escape(WEBAPP_URL)}</code>")
-
-
-@dp.message(Command("post_shop"))
-async def post_shop(message: types.Message):
-    if message.from_user.id != ADMIN_ID:
-        return await message.answer("⛔️ Нет доступа.")
-
-    text = (
-        "🇷🇺 <b>MONTELLA</b> 💧\nНажмите кнопку ниже, чтобы открыть приложение.\n\n"
-        "🇺🇿 <b>MONTELLA</b> 💧\nPastdagi tugma orqali ilovani oching.\n\n"
-        "🇬🇧 <b>MONTELLA</b> 💧\nTap the button below to open the app."
-    )
-
-    try:
-        sent = await bot.send_message(CHANNEL_ID, text, reply_markup=kb_channel_url())
-        try:
-            await bot.pin_chat_message(CHANNEL_ID, sent.message_id, disable_notification=True)
-            await message.answer("✅ Пост отправлен в канал и закреплён.")
-        except Exception:
-            await message.answer(
-                "✅ Пост отправлен в канал.\n"
-                "⚠️ Не удалось закрепить — дай боту право «Закреплять сообщения»."
-            )
-    except Exception as e:
-        logging.exception("CHANNEL POST ERROR")
-        await message.answer(f"❌ Ошибка отправки в канал: <code>{html.escape(str(e))}</code>")
-
-
-# ====== ВСПОМОГАТЕЛЬНЫЕ ======
 def fmt_sum(n: int) -> str:
     try:
         n = int(n)
@@ -182,10 +140,6 @@ def safe_int(v, default=0) -> int:
         return int(float(s))
     except Exception:
         return default
-
-
-def esc(v) -> str:
-    return html.escape(clean_str(v))
 
 
 def parse_cart_items(data: dict) -> list[dict]:
@@ -248,14 +202,17 @@ def get_total_from_payload(data: dict) -> int:
 
     items = parse_cart_items(data)
     calc = 0
+
     for it in items:
         if not isinstance(it, dict):
             continue
+
         item_total = safe_int(it.get("total"), 0)
         if item_total > 0:
             calc += item_total
         else:
             calc += safe_int(it.get("price"), 0) * safe_int(it.get("qty"), 0)
+
     return calc
 
 
@@ -278,11 +235,11 @@ def has_cart_items(data: dict) -> bool:
     for it in items:
         if isinstance(it, dict) and safe_int(it.get("qty"), 0) > 0:
             return True
+
     return False
 
 
 def is_consultation_payload(data: dict) -> bool:
-    # Консультация — это сообщение без корзины
     action = clean_str(data.get("action")).lower()
     text = clean_str(data.get("text"))
 
@@ -310,7 +267,92 @@ def is_order_payload(data: dict) -> bool:
     return False
 
 
-# ====== ДАННЫЕ ИЗ WEBAPP ======
+@dp.message(CommandStart())
+async def start(message: types.Message):
+    try:
+        user_id = message.from_user.id if message.from_user else 0
+
+        if not allow_start(user_id):
+            return
+
+        logging.info("START from user_id=%s username=%s", user_id, message.from_user.username if message.from_user else None)
+
+        await message.answer(
+            welcome_text(),
+            reply_markup=kb_webapp_reply()
+        )
+
+    except Exception:
+        logging.exception("START HANDLER ERROR")
+
+
+@dp.message(Command("startapp"))
+async def startapp(message: types.Message):
+    try:
+        user_id = message.from_user.id if message.from_user else 0
+
+        if not allow_start(user_id):
+            return
+
+        await message.answer(
+            welcome_text(),
+            reply_markup=kb_webapp_reply()
+        )
+
+    except Exception:
+        logging.exception("STARTAPP HANDLER ERROR")
+
+
+@dp.message(Command("ping"))
+async def ping(message: types.Message):
+    await message.answer("✅ Бот работает.")
+
+
+@dp.message(Command("debug_url"))
+async def debug_url(message: types.Message):
+    if not message.from_user or message.from_user.id != ADMIN_ID:
+        return
+
+    await message.answer(
+        f"✅ BOT_USERNAME = <code>{html.escape(BOT_USERNAME)}</code>\n"
+        f"✅ WEBAPP_URL = <code>{html.escape(WEBAPP_URL)}</code>\n"
+        f"✅ ADMIN_ID = <code>{ADMIN_ID}</code>\n"
+        f"✅ SKIP_DELETE_WEBHOOK = <code>{SKIP_DELETE_WEBHOOK}</code>"
+    )
+
+
+@dp.message(Command("post_shop"))
+async def post_shop(message: types.Message):
+    if not message.from_user or message.from_user.id != ADMIN_ID:
+        return await message.answer("⛔️ Нет доступа.")
+
+    text = (
+        "🇷🇺 <b>MONTELLA</b> 💧\n"
+        "Нажмите кнопку ниже, чтобы открыть приложение.\n\n"
+        "🇺🇿 <b>MONTELLA</b> 💧\n"
+        "Pastdagi tugma orqali ilovani oching.\n\n"
+        "🇬🇧 <b>MONTELLA</b> 💧\n"
+        "Tap the button below to open the app."
+    )
+
+    try:
+        sent = await bot.send_message(CHANNEL_ID, text, reply_markup=kb_channel_url())
+
+        try:
+            await bot.pin_chat_message(CHANNEL_ID, sent.message_id, disable_notification=True)
+            await message.answer("✅ Пост отправлен в канал и закреплён.")
+        except Exception:
+            logging.exception("PIN ERROR")
+            await message.answer(
+                "✅ Пост отправлен в канал.\n"
+                "⚠️ Не удалось закрепить — дай боту право «Закреплять сообщения»."
+            )
+
+    except Exception as e:
+        logging.exception("CHANNEL POST ERROR")
+        await message.answer(f"❌ Ошибка отправки в канал: <code>{html.escape(str(e))}</code>")
+
+
 @dp.message(F.web_app_data)
 async def webapp_data(message: types.Message):
     raw = message.web_app_data.data
@@ -318,14 +360,15 @@ async def webapp_data(message: types.Message):
     try:
         data = json.loads(raw) if raw else {}
     except Exception:
+        logging.exception("JSON PARSE ERROR")
         data = {}
 
     logging.info("WEBAPP DATA RAW: %s", raw)
     logging.info("WEBAPP DATA JSON: %s", data)
 
-    # ====== СНАЧАЛА ПРОВЕРЯЕМ ЗАКАЗ ======
     if is_order_payload(data):
         lines = build_order_lines(data)
+
         if not lines:
             return await message.answer("⚠️ Корзина пустая. Добавьте позиции и повторите.")
 
@@ -350,12 +393,16 @@ async def webapp_data(message: types.Message):
 
         if order_type and order_type != "—":
             admin_text += f"\n🚚 <b>Тип:</b> {html.escape(order_type)}"
+
         if payment and payment != "—":
             admin_text += f"\n💳 <b>Оплата:</b> {html.escape(payment)}"
+
         if address and address != "—":
             admin_text += f"\n📍 <b>Адрес:</b> {html.escape(address)}"
+
         if phone:
             admin_text += f"\n📞 <b>Телефон:</b> {html.escape(phone)}"
+
         if text:
             admin_text += f"\n💬 <b>Сообщение:</b> {html.escape(text)}"
 
@@ -367,13 +414,13 @@ async def webapp_data(message: types.Message):
         try:
             await bot.send_message(ADMIN_ID, admin_text)
             return await message.answer("✅ <b>Заявка отправлена!</b>\nМы скоро свяжемся с вами.")
+
         except Exception as e:
             logging.exception("ORDER SEND ERROR")
             return await message.answer(
                 f"❌ Ошибка отправки заказа админу:\n<code>{html.escape(str(e))}</code>"
             )
 
-    # ====== ПОТОМ КОНСУЛЬТАЦИЮ ======
     if is_consultation_payload(data):
         text = clean_str(data.get("text"))
         phone = clean_str(data.get("phone"))
@@ -394,6 +441,7 @@ async def webapp_data(message: types.Message):
         try:
             await bot.send_message(ADMIN_ID, admin_text)
             return await message.answer("✅ <b>Сообщение отправлено!</b>\nМы скоро ответим.")
+
         except Exception as e:
             logging.exception("CONSULT SEND ERROR")
             return await message.answer(
@@ -403,11 +451,80 @@ async def webapp_data(message: types.Message):
     await message.answer("⚠️ Данные не распознаны. Откройте приложение и попробуйте снова.")
 
 
-# ====== ЗАПУСК ======
+@dp.message()
+async def any_message(message: types.Message):
+    text = clean_str(message.text).lower()
+
+    if text in ("старт", "start", "начать", "открыть", "open", "ochish"):
+        return await start(message)
+
+    await message.answer(
+        "Нажмите кнопку ниже, чтобы открыть приложение.",
+        reply_markup=kb_webapp_reply()
+    )
+
+
+async def safe_delete_webhook():
+    if SKIP_DELETE_WEBHOOK:
+        logging.info("Skipping delete_webhook to avoid Telegram timeout")
+        return
+
+    try:
+        await asyncio.wait_for(
+            bot.delete_webhook(drop_pending_updates=True),
+            timeout=10
+        )
+        logging.info("Webhook deleted successfully")
+
+    except asyncio.TimeoutError:
+        logging.warning("delete_webhook timeout — continuing polling anyway")
+
+    except Exception:
+        logging.exception("delete_webhook error — continuing polling anyway")
+
+
+async def run_polling_forever():
+    retry = 3
+
+    while True:
+        try:
+            await safe_delete_webhook()
+
+            me = await bot.get_me()
+            logging.info("Bot started successfully: @%s id=%s", me.username, me.id)
+
+            await dp.start_polling(
+                bot,
+                allowed_updates=dp.resolve_used_update_types(),
+                polling_timeout=30
+            )
+
+        except TelegramRetryAfter as e:
+            wait_time = int(e.retry_after) + 1
+            logging.warning("TelegramRetryAfter: sleeping %s sec", wait_time)
+            await asyncio.sleep(wait_time)
+
+        except TelegramNetworkError:
+            logging.exception("Telegram network error. Restarting polling...")
+            await asyncio.sleep(retry)
+            retry = min(retry + 2, 30)
+
+        except asyncio.CancelledError:
+            logging.info("Polling cancelled")
+            break
+
+        except Exception:
+            logging.exception("Unexpected polling error. Restarting...")
+            await asyncio.sleep(retry)
+            retry = min(retry + 2, 30)
+
+
 async def main():
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    await run_polling_forever()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logging.info("Bot stopped manually")
