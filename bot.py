@@ -30,8 +30,10 @@ if not BOT_TOKEN:
 ADMIN_ID = int(os.getenv("ADMIN_ID", "6013591658"))
 CHANNEL_ID = os.getenv("CHANNEL_ID", "@MONTELLA_APP").strip()
 
-DEFAULT_WEBAPP = "https://tahirovdd-lang.github.io/Montella/"
-WEBAPP_URL = os.getenv("WEBAPP_URL", DEFAULT_WEBAPP).strip()
+WEBAPP_URL = os.getenv(
+    "WEBAPP_URL",
+    "https://tahirovdd-lang.github.io/Montella/"
+).strip()
 
 if WEBAPP_URL.endswith("/"):
     WEBAPP_URL += "index.html"
@@ -126,10 +128,9 @@ def parse_cart_items(data):
 
 
 def build_order_lines(data):
-    items = parse_cart_items(data)
     lines = []
 
-    for item in items:
+    for item in parse_cart_items(data):
         if not isinstance(item, dict):
             continue
 
@@ -166,9 +167,11 @@ def get_total(data):
             return total
 
     total = 0
+
     for item in parse_cart_items(data):
         if isinstance(item, dict):
             item_total = safe_int(item.get("total"), 0)
+
             if item_total > 0:
                 total += item_total
             else:
@@ -179,6 +182,7 @@ def get_total(data):
 
 def get_count(data):
     cart_stats = data.get("cart_stats")
+
     if isinstance(cart_stats, dict):
         count = safe_int(cart_stats.get("count"), 0)
         if count > 0:
@@ -200,6 +204,7 @@ def has_cart_items(data):
 
 def is_order_payload(data):
     action = clean_str(data.get("action")).lower()
+
     return has_cart_items(data) or action in (
         "order",
         "checkout",
@@ -215,30 +220,32 @@ def is_consultation_payload(data):
     if has_cart_items(data):
         return False
 
-    return action in ("consultation", "consult", "message", "support") or bool(text)
+    return action in (
+        "consultation",
+        "consult",
+        "message",
+        "support"
+    ) or bool(text)
 
 
 @dp.message(CommandStart())
 async def start(message: types.Message):
-    try:
-        user_id = message.from_user.id if message.from_user else 0
+    user_id = message.from_user.id if message.from_user else 0
 
-        if not allow_start(user_id):
-            return
+    if not allow_start(user_id):
+        return
 
-        logging.info("START from user_id=%s", user_id)
+    logging.info("START from user_id=%s", user_id)
 
-        await message.answer(
-            welcome_text(),
-            reply_markup=main_keyboard()
-        )
-
-    except Exception:
-        logging.exception("START ERROR")
+    await message.answer(
+        welcome_text(),
+        reply_markup=main_keyboard()
+    )
 
 
 @dp.message(Command("ping"))
 async def ping(message: types.Message):
+    logging.info("PING from user_id=%s", message.from_user.id if message.from_user else 0)
     await message.answer("✅ Бот работает.")
 
 
@@ -247,13 +254,10 @@ async def debug(message: types.Message):
     if not message.from_user or message.from_user.id != ADMIN_ID:
         return
 
-    me = await bot.get_me()
-
     await message.answer(
-        f"✅ Бот запущен\n"
-        f"Username: @{html.escape(me.username or '')}\n"
-        f"ID: <code>{me.id}</code>\n"
-        f"WEBAPP_URL: <code>{html.escape(WEBAPP_URL)}</code>"
+        f"✅ Код работает\n"
+        f"WEBAPP_URL: <code>{html.escape(WEBAPP_URL)}</code>\n"
+        f"ADMIN_ID: <code>{ADMIN_ID}</code>"
     )
 
 
@@ -272,25 +276,13 @@ async def post_shop(message: types.Message):
     )
 
     try:
-        sent = await bot.send_message(
+        await bot.send_message(
             CHANNEL_ID,
             text,
             reply_markup=channel_keyboard()
         )
 
-        try:
-            await bot.pin_chat_message(
-                CHANNEL_ID,
-                sent.message_id,
-                disable_notification=True
-            )
-            await message.answer("✅ Пост отправлен в канал и закреплён.")
-        except Exception:
-            logging.exception("PIN ERROR")
-            await message.answer(
-                "✅ Пост отправлен в канал.\n"
-                "⚠️ Не удалось закрепить — дай боту право закреплять сообщения."
-            )
+        await message.answer("✅ Пост отправлен в канал.")
 
     except Exception as e:
         logging.exception("CHANNEL POST ERROR")
@@ -362,6 +354,7 @@ async def webapp_data(message: types.Message):
             return await message.answer(
                 "✅ <b>Заявка отправлена!</b>\nМы скоро свяжемся с вами."
             )
+
         except Exception as e:
             logging.exception("ORDER SEND ERROR")
             return await message.answer(
@@ -390,6 +383,7 @@ async def webapp_data(message: types.Message):
             return await message.answer(
                 "✅ <b>Сообщение отправлено!</b>\nМы скоро ответим."
             )
+
         except Exception as e:
             logging.exception("CONSULT SEND ERROR")
             return await message.answer(
@@ -401,51 +395,25 @@ async def webapp_data(message: types.Message):
 
 @dp.message()
 async def any_message(message: types.Message):
-    text = clean_str(message.text).lower()
-
-    if text in ("старт", "start", "начать", "открыть", "open", "ochish"):
-        return await start(message)
-
     await message.answer(
         "Нажмите кнопку ниже, чтобы открыть приложение.",
         reply_markup=main_keyboard()
     )
 
 
-async def notify_startup():
-    try:
-        me = await bot.get_me()
-
-        logging.info("Bot started successfully: @%s id=%s", me.username, me.id)
-
-        await bot.send_message(
-            ADMIN_ID,
-            f"✅ Бот запустился\n"
-            f"Username: @{html.escape(me.username or '')}\n"
-            f"ID: <code>{me.id}</code>\n"
-            f"WEBAPP_URL: <code>{html.escape(WEBAPP_URL)}</code>"
-        )
-
-    except Exception:
-        logging.exception("STARTUP NOTIFY ERROR")
-
-
 async def main():
     while True:
         try:
-            await notify_startup()
+            logging.info("Starting polling WITHOUT delete_webhook and WITHOUT startup notify...")
 
             await dp.start_polling(
                 bot,
                 allowed_updates=dp.resolve_used_update_types(),
-                polling_timeout=20
+                polling_timeout=10
             )
 
         except TelegramConflictError:
-            logging.error(
-                "❌ Запущена вторая копия этого же бота. "
-                "Останови старый контейнер или старый хостинг."
-            )
+            logging.error("❌ Запущена вторая копия этого же бота. Останови старый контейнер.")
             await asyncio.sleep(15)
 
         except TelegramRetryAfter as e:
