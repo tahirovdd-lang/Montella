@@ -2,9 +2,11 @@ import asyncio
 import logging
 import os
 import html
+import json
+import re
 from aiohttp import web
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
@@ -54,6 +56,129 @@ def welcome_text():
     )
 
 
+def clean_str(value):
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
+def esc(value):
+    return html.escape(clean_str(value))
+
+
+def fmt_sum(value):
+    try:
+        value = int(float(str(value).replace(" ", "")))
+    except Exception:
+        value = 0
+    return f"{value:,}".replace(",", " ")
+
+
+def safe_int(value, default=0):
+    try:
+        if value is None:
+            return default
+        return int(float(str(value).replace(" ", "")))
+    except Exception:
+        return default
+
+
+def normalize_phone(phone):
+    digits = re.sub(r"\D", "", clean_str(phone))
+
+    if digits.startswith("998") and len(digits) == 12:
+        return "+" + digits
+
+    if len(digits) == 9:
+        return "+998" + digits
+
+    if digits.startswith("8") and len(digits) == 10:
+        return "+998" + digits[1:]
+
+    if clean_str(phone).startswith("+998"):
+        return clean_str(phone)
+
+    return clean_str(phone)
+
+
+def valid_uz_phone(phone):
+    digits = re.sub(r"\D", "", normalize_phone(phone))
+    return digits.startswith("998") and len(digits) == 12
+
+
+def tg_user_label(user):
+    if user.username:
+        return f"@{user.username}"
+    return user.full_name or "Пользователь"
+
+
+def get_items(data):
+    if isinstance(data.get("items"), list):
+        return data.get("items")
+    if isinstance(data.get("cart"), list):
+        return data.get("cart")
+    if isinstance(data.get("products"), list):
+        return data.get("products")
+    return []
+
+
+def build_order_lines(data):
+    lines = []
+    items = get_items(data)
+
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+
+        name = clean_str(item.get("name") or item.get("title") or item.get("id") or "Товар")
+        qty = safe_int(item.get("qty") or item.get("quantity") or item.get("count"), 0)
+        price = safe_int(item.get("price"), 0)
+        total = safe_int(item.get("total") or item.get("sum"), 0)
+
+        if qty <= 0:
+            qty = 1
+
+        if total <= 0 and price > 0:
+            total = price * qty
+
+        if total > 0:
+            lines.append(f"• {esc(name)} × {qty} = {fmt_sum(total)} сум")
+        else:
+            lines.append(f"• {esc(name)} × {qty}")
+
+    return lines
+
+
+def get_total(data):
+    for key in ("total", "total_sum", "sum", "amount"):
+        total = safe_int(data.get(key), 0)
+        if total > 0:
+            return total
+
+    total = 0
+    for item in get_items(data):
+        if not isinstance(item, dict):
+            continue
+
+        item_total = safe_int(item.get("total") or item.get("sum"), 0)
+        if item_total > 0:
+            total += item_total
+        else:
+            qty = safe_int(item.get("qty") or item.get("quantity") or item.get("count"), 1)
+            price = safe_int(item.get("price"), 0)
+            total += price * qty
+
+    return total
+
+
+def is_order_payload(data):
+    action = clean_str(data.get("action")).lower()
+    return (
+        action in ("order", "checkout", "checkout_order", "cart_order")
+        or len(get_items(data)) > 0
+    )
+
+
 @dp.message(CommandStart())
 async def start(message: types.Message):
     logging.info("START from %s", message.from_user.id)
@@ -82,6 +207,86 @@ async def debug(message: types.Message):
         f"WEBAPP_URL: <code>{html.escape(WEBAPP_URL)}</code>\n"
         f"PORT: <code>{PORT}</code>"
     )
+
+
+@dp.message(F.web_app_data)
+async def webapp_data(message: types.Message):
+    raw = message.web_app_data.data
+    logging.info("WEBAPP RAW DATA: %s", raw)
+
+    try:
+        data = json.loads(raw)
+    except Exception:
+        logging.exception("JSON parse error")
+        await message.answer("❌ Ошибка данных заказа. Попробуйте оформить заказ ещё раз.")
+        return
+
+    if not is_order_payload(data):
+        await message.answer("⚠️ Данные не распознаны как заказ. Откройте приложение и попробуйте снова.")
+        return
+
+    address = clean_str(
+        data.get("address")
+        or data.get("delivery_address")
+        or data.get("deliveryAddress")
+    )
+
+    phone = normalize_phone(
+        data.get("phone")
+        or data.get("telephone")
+        or data.get("client_phone")
+        or data.get("clientPhone")
+    )
+
+    if not valid_uz_phone(phone):
+        await message.answer(
+            "⚠️ Укажите правильный номер телефона.\n\n"
+            "Формат: <b>+998 XX XXX XX XX</b>"
+        )
+        return
+
+    if not address:
+        await message.answer(
+            "⚠️ Укажите адрес доставки.\n\n"
+            "Без адреса доставки заказ не принимается."
+        )
+        return
+
+    order_lines = build_order_lines(data)
+    if not order_lines:
+        await message.answer("⚠️ Корзина пустая. Добавьте товары и повторите заказ.")
+        return
+
+    total = get_total(data)
+    user_label = tg_user_label(message.from_user)
+
+    admin_text = (
+        "🛒 <b>НОВЫЙ ЗАКАЗ MONTELLA</b>\n\n"
+        f"👤 <b>Telegram:</b> {html.escape(user_label)}\n"
+        f"🆔 <b>ID:</b> <code>{message.from_user.id}</code>\n"
+        f"📞 <b>Телефон:</b> {html.escape(phone)}\n"
+        f"📍 <b>Адрес доставки:</b> {html.escape(address)}\n\n"
+        f"📦 <b>Заказ:</b>\n"
+        + "\n".join(order_lines) +
+        f"\n\n💰 <b>Сумма:</b> {fmt_sum(total)} сум"
+    )
+
+    comment = clean_str(data.get("comment"))
+    if comment:
+        admin_text += f"\n📝 <b>Комментарий:</b> {html.escape(comment)}"
+
+    try:
+        await bot.send_message(ADMIN_ID, admin_text)
+        await message.answer(
+            "✅ <b>Заказ принят!</b>\n\n"
+            "Мы скоро свяжемся с вами.",
+            reply_markup=keyboard()
+        )
+    except Exception as e:
+        logging.exception("ORDER SEND ERROR")
+        await message.answer(
+            f"❌ Ошибка отправки заказа админу:\n<code>{html.escape(str(e))}</code>"
+        )
 
 
 @dp.message()
