@@ -37,9 +37,20 @@ dp = Dispatcher()
 def keyboard():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Ochish • Открыть • Open", web_app=WebAppInfo(url=WEBAPP_URL))]
+            [KeyboardButton(text="Ochish • Открыть", web_app=WebAppInfo(url=WEBAPP_URL))]
         ],
         resize_keyboard=True
+    )
+
+
+def welcome_text():
+    return (
+        "🇷🇺 <b>Добро пожаловать в MONTELLA 💧</b>\n\n"
+        "Нажмите кнопку <b>«Открыть»</b> ниже, чтобы перейти в приложение.\n"
+        "В приложении вы сможете ознакомиться с продукцией, оформить заказ и связаться с нами.\n\n"
+        "🇺🇿 <b>MONTELLA 💧 ga xush kelibsiz!</b>\n\n"
+        "Ilovaga kirish uchun quyidagi <b>«Ochish»</b> tugmasini bosing.\n"
+        "Ilova orqali mahsulotlar bilan tanishishingiz, buyurtma berishingiz va biz bilan bog‘lanishingiz mumkin."
     )
 
 
@@ -47,7 +58,7 @@ def keyboard():
 async def start(message: types.Message):
     logging.info("START from %s", message.from_user.id)
     await message.answer(
-        "✅ Бот работает.\n\nНажмите кнопку ниже, чтобы открыть приложение.",
+        welcome_text(),
         reply_markup=keyboard()
     )
 
@@ -76,7 +87,7 @@ async def debug(message: types.Message):
 @dp.message()
 async def any_message(message: types.Message):
     await message.answer(
-        "✅ Бот получил сообщение.\nНажмите кнопку ниже.",
+        welcome_text(),
         reply_markup=keyboard()
     )
 
