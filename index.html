@@ -1230,6 +1230,16 @@ body{
       oninput="formatPhoneModalInput(this)"
       onkeydown="onPhoneModalKey(event)"
     />
+    <input
+      id="deliveryAddressInput"
+      class="phone-input"
+      type="text"
+      autocomplete="off"
+      name="montella_delivery_address"
+      placeholder="Адрес доставки"
+      style="margin-top:10px;"
+      onkeydown="onPhoneModalKey(event)"
+    />
     <div class="phone-actions">
       <button class="phone-btn secondary" type="button" onclick="closePhoneModal(event)" id="phoneCancelBtn">Отмена</button>
       <button class="phone-btn primary" type="button" onclick="savePhoneFromModal()" id="phoneSaveBtn">Сохранить</button>
@@ -1367,6 +1377,8 @@ const UI = {
     consultSent:'✅ Запрос отправлен менеджеру',
     consultNeedText:'Напишите запрос',
     consultNeedPhone:'Введите номер телефона',
+    addressNeed:'Укажите адрес доставки',
+    addressPh:'Адрес доставки',
     consultHint:'Сначала укажите номер телефона, затем отправьте запрос менеджеру.',
     nothingFound:'Ничего не найдено',
     categoryHint:'Нажмите, чтобы открыть товары',
@@ -1423,6 +1435,8 @@ const UI = {
     consultSent:'✅ So‘rov menejerga yuborildi',
     consultNeedText:'So‘rov yozing',
     consultNeedPhone:'Telefon raqamini kiriting',
+    addressNeed:'Yetkazib berish manzilini kiriting',
+    addressPh:'Yetkazib berish manzili',
     consultHint:'Avval telefon raqamingizni kiriting, keyin so‘rov yuboring.',
     nothingFound:'Hech narsa topilmadi',
     categoryHint:'Tovarlarni ochish uchun bosing',
@@ -1479,6 +1493,8 @@ const UI = {
     consultSent:'✅ Sent to manager',
     consultNeedText:'Type a request',
     consultNeedPhone:'Enter phone number',
+    addressNeed:'Enter delivery address',
+    addressPh:'Delivery address',
     consultHint:'Enter your phone number first, then send the request.',
     nothingFound:'Nothing found',
     categoryHint:'Tap to open products',
@@ -1535,6 +1551,8 @@ const UI = {
     consultSent:'✅ Ба менеҷер фиристода шуд',
     consultNeedText:'Дархост нависед',
     consultNeedPhone:'Рақами телефонро ворид кунед',
+    addressNeed:'Суроғаи доставкаро ворид кунед',
+    addressPh:'Суроғаи доставка',
     consultHint:'Аввал рақами телефонро ворид кунед, баъд дархостро фиристед.',
     nothingFound:'Ягон чиз ёфт нашуд',
     categoryHint:'Барои кушодани молҳо пахш кунед',
@@ -1630,6 +1648,7 @@ const CART = {};
 let lang='uz';
 let currentSheetCategory = null;
 let savedConsultPhone = '';
+let savedDeliveryAddress = '';
 
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function nameOfCategory(id){
@@ -1912,26 +1931,14 @@ function digitsOnly(v){
 function formatPhoneCommon(value){
   let raw = digitsOnly(value);
 
-  if(!raw) return '';
-
   if(raw.startsWith('998')){
-    raw = raw.slice(0, 12);
-    let local = raw.slice(3);
-
-    let out = '+998';
-    if(local.length > 0) out += ' (' + local.slice(0,2);
-    if(local.length >= 2) out += ')';
-    if(local.length > 2) out += ' ' + local.slice(2,5);
-    if(local.length > 5) out += '-' + local.slice(5,7);
-    if(local.length > 7) out += '-' + local.slice(7,9);
-
-    return out;
+    raw = raw.slice(3);
   }
 
   raw = raw.slice(0, 9);
 
-  let out = '';
-  if(raw.length > 0) out += '(' + raw.slice(0,2);
+  let out = '+998';
+  if(raw.length > 0) out += ' (' + raw.slice(0,2);
   if(raw.length >= 2) out += ')';
   if(raw.length > 2) out += ' ' + raw.slice(2,5);
   if(raw.length > 5) out += '-' + raw.slice(5,7);
@@ -1942,13 +1949,16 @@ function formatPhoneCommon(value){
 
 function formatPhoneModalInput(el){
   el.value = formatPhoneCommon(el.value);
+  try{ el.setSelectionRange(el.value.length, el.value.length); }catch(_){}
 }
 
 function openPhoneModal(){
   const modal = document.getElementById('phoneModal');
   const input = document.getElementById('phoneModalInput');
+  const addressInput = document.getElementById('deliveryAddressInput');
   if(!modal || !input) return;
-  input.value = savedConsultPhone ? formatPhoneCommon(savedConsultPhone) : '';
+  input.value = savedConsultPhone ? formatPhoneCommon(savedConsultPhone) : '+998';
+  if(addressInput) addressInput.value = savedDeliveryAddress || '';
   modal.classList.add('show');
   setTimeout(()=>{
     input.focus();
@@ -1975,11 +1985,19 @@ function getNormalizedPhone(){
   return '';
 }
 
+function getDeliveryAddress(){
+  const addressInput = document.getElementById('deliveryAddressInput');
+  const value = (addressInput?.value || savedDeliveryAddress || '').trim();
+  return value;
+}
+
 function savePhoneFromModal(){
   const input = document.getElementById('phoneModalInput');
+  const addressInput = document.getElementById('deliveryAddressInput');
   if(!input) return;
   const raw = input.value || '';
   const digits = digitsOnly(raw);
+  const address = (addressInput?.value || '').trim();
 
   if(!((digits.length === 12 && digits.startsWith('998')) || digits.length === 9)){
     showToast(UI[lang].consultNeedPhone);
@@ -1988,6 +2006,8 @@ function savePhoneFromModal(){
   }
 
   savedConsultPhone = (digits.length === 9 ? '998' + digits : digits);
+  savedDeliveryAddress = address;
+
   closePhoneModal();
   showToast(UI[lang].phoneSaved);
   setTimeout(()=>{
@@ -2082,6 +2102,7 @@ function checkoutOrder(e){
   const stats = getCartStats();
   const phone = getNormalizedPhone();
   const cartItems = buildCartPayload();
+  const address = getDeliveryAddress();
 
   if(!stats.count){
     showToast(UI[lang].checkoutNeedCart);
@@ -2094,17 +2115,28 @@ function checkoutOrder(e){
     return;
   }
 
+  if(!address){
+    openPhoneModal();
+    showToast(UI[lang].addressNeed);
+    setTimeout(()=>document.getElementById('deliveryAddressInput')?.focus(), 150);
+    return;
+  }
+
   const orderText = buildOrderMessageText();
 
   const payload = {
-    action:'consultation',
+    action:'order',
     to_admin_id: ADMIN_ID,
     brand:'MONTELLA',
     tg:{id:tg_id,username:tg_username,first_name:tg_first_name},
     phone:'+' + phone,
+    address: address,
+    delivery_address: address,
     text: orderText,
+    items: cartItems,
     cart: cartItems,
     cart_stats: stats,
+    total: stats.sum,
     total_sum: stats.sum,
     currency:'UZS',
     order_from_cart: true,
@@ -2207,6 +2239,9 @@ function applyUI(){
 
   const phoneInput = document.getElementById('phoneModalInput');
   if(phoneInput) phoneInput.placeholder = UI[lang].consultPhonePh;
+
+  const addressInput = document.getElementById('deliveryAddressInput');
+  if(addressInput) addressInput.placeholder = UI[lang].addressPh;
 
   const searchInput = document.getElementById('searchInput');
   if(searchInput) searchInput.placeholder = UI[lang].searchPh;
